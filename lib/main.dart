@@ -1,10 +1,16 @@
-import 'package:dagather_frontend/components/navigation_bar.dart';
+import 'package:dagather_frontend/screens/login/login_screen.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -36,7 +42,7 @@ class MyApp extends StatelessWidget {
           home: child,
         );
       },
-      child: const BaseScaffold(),
+      child: LoginScreen(),
     );
   }
 }

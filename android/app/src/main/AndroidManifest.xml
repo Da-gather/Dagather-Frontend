@@ -1,9 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.dagather_frontend">
+   <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="dagather_frontend"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <activity 
+            android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity"
+            android:exported="true">
+            <intent-filter android:label="flutter_web_auth">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="kakao4bce9d2723a2f6bd5dd73d3ffda886f5" android:host="oauth"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"

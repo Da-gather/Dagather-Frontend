@@ -19,7 +19,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
 
   final List<Widget> _screenList = [
     const HomeScreen(),
-    const ChatsScreen(),
+    ChatsScreen(),
     const AccountScreen(),
   ];
 

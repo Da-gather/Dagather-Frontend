@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "875986338134",
+    "project_id": "da-gather",
+    "storage_bucket": "da-gather.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875986338134:android:02198517dfcc27eb3cd6f7",
+        "android_client_info": {
+          "package_name": "com.example.dagather_frontend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "875986338134-khb6o77l8fr25qk1qjco24g1ptknuusa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRn3RErCvTvvy2axDCeGKdU5lVVxu28Iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "875986338134-khb6o77l8fr25qk1qjco24g1ptknuusa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "875986338134-g54t906n2cukfjjp9he4kpcsloj0t1r3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dagatherFrontend"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

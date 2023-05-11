@@ -19,11 +19,6 @@ class Message extends StatelessWidget {
     required this.created,
     required this.isMine,
   });
-  // TODO: 내용, 타입, 시간
-
-  /// 메세지: 사용자 간에 주고받는 대화 내용 또는 이미지
-  /// @param
-  /// @param
 
   String _formatTimeStamp(Timestamp timestamp) {
     final int createdInNum =
@@ -65,8 +60,8 @@ class Message extends StatelessWidget {
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(
-              vertical: 16.h,
-              horizontal: 24.w,
+              vertical: 12.h,
+              horizontal: 20.w,
             ),
             child: Text(
               content,
@@ -103,8 +98,8 @@ class Message extends StatelessWidget {
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(
-              vertical: 16.h,
-              horizontal: 24.w,
+              vertical: 12.h,
+              horizontal: 20.w,
             ),
             child: Text(
               content,

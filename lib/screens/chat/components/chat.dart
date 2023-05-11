@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import '../screens/chat_screen.dart';
 
 class Chat extends StatelessWidget {
+  final String id;
   final String name;
   final String imageUrl;
   final String lastMessage;
@@ -17,13 +18,12 @@ class Chat extends StatelessWidget {
 
   const Chat({
     super.key,
+    required this.id,
     required this.name,
     required this.imageUrl,
     required this.lastMessage,
     required this.lastTime,
   });
-
-  void _onTapped(context) {}
 
   String _formatTimeStamp(Timestamp timestamp) {
     final int createdInNum =
@@ -38,9 +38,14 @@ class Chat extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ChatScreen())),
+          context,
+          MaterialPageRoute(
+              builder: (context) => ChatScreen(
+                    id,
+                    name: name,
+                    imgUrl: imageUrl,
+                  ))),
       child: Container(
-        constraints: BoxConstraints(maxHeight: 102.h),
         decoration: BoxDecoration(
           color: AppColor.g100,
           borderRadius: const BorderRadius.only(
@@ -86,7 +91,7 @@ class Chat extends StatelessWidget {
                             name,
                             style: TextStyle(
                               fontFamily: pretendardFont,
-                              fontSize: 15.sp,
+                              fontSize: 14.sp,
                               fontVariations: const [
                                 FontVariation('wght', 700),
                               ],

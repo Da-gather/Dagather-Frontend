@@ -1,45 +1,51 @@
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dagather_frontend/models/message_model.dart';
 import 'package:dagather_frontend/screens/chat/components/message.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
-import 'package:dagather_frontend/utilities/fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'dart:developer' as developer;
 
-enum MessageQuery {
-  id,
-  content,
-  receiver,
-  sender,
-  created,
-  type,
-  read,
+import '../components/chat_app_bar.dart';
+import '../components/chat_bottom_bar.dart';
+
+enum MessageType {
+  text,
+  image,
 }
 
 class ChatScreen extends StatelessWidget {
-  ChatScreen({super.key});
+  final String docId;
+  final String name;
+  final String imgUrl;
+  late final Query<MessageModel> _messagesRef;
 
-  final TextEditingController _textController = TextEditingController();
-
-  final _uid = "0yUlf0Iub9R4fM4V8f1FcyQQBfo2";
-
-  final _messagesRef = FirebaseFirestore.instance
-      .collection('messages')
-      .withConverter<MessageModel>(
-        fromFirestore: (snapshots, _) =>
-            MessageModel.fromJson(snapshots.data()!),
-        toFirestore: (message, _) => message.toJson(),
-      )
-      .where("receiver",
-          whereIn: ["1", "0yUlf0Iub9R4fM4V8f1FcyQQBfo2"]).orderBy("created");
+  ChatScreen(
+    String id, {
+    super.key,
+    required this.name,
+    required this.imgUrl,
+  })  : docId = id,
+        _messagesRef = FirebaseFirestore.instance
+            .collection('chats')
+            .doc(id)
+            .collection('messages')
+            .orderBy("created")
+            .withConverter<MessageModel>(
+              fromFirestore: (snapshots, _) =>
+                  MessageModel.fromJson(snapshots.data()!),
+              toFirestore: (message, _) => message.toJson(),
+            );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.g100,
-      appBar: AppBar(title: const Text("채팅 디테일")),
+      appBar: ChatAppBar(
+        imgUrl: imgUrl,
+        name: name,
+      ),
       body: Column(
         children: [
           Expanded(
@@ -54,6 +60,7 @@ class ChatScreen extends StatelessWidget {
                     );
                   }
                   if (snapshot.hasError) {
+                    developer.log(snapshot.error.toString());
                     throw Error();
                   }
                   if (!snapshot.hasData) {
@@ -64,11 +71,13 @@ class ChatScreen extends StatelessWidget {
                       shrinkWrap: true,
                       itemCount: snapshot.data!.size,
                       itemBuilder: (context, index) {
+                        final MessageModel message =
+                            snapshot.data!.docs[index].data();
                         return Message(
-                          content: snapshot.data!.docs[index].data().content,
-                          created: snapshot.data!.docs[index].data().created,
-                          isMine:
-                              snapshot.data!.docs[index].data().sender == _uid,
+                          content: message.content,
+                          created: message.created,
+                          isMine: message.sender ==
+                              FirebaseAuth.instance.currentUser!.uid,
                         );
                       },
                       separatorBuilder: (context, index) {
@@ -82,59 +91,7 @@ class ChatScreen extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            height: 60.h,
-            decoration: const BoxDecoration(
-              color: AppColor.g200,
-            ),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  color: AppColor.g500,
-                  icon: const Icon(Icons.add_a_photo_rounded),
-                ),
-                Flexible(
-                  child: TextField(
-                    onChanged: (value) {},
-                    controller: _textController,
-                    style: TextStyle(
-                      fontFamily: pretendardFont,
-                      fontSize: 14.sp,
-                      fontVariations: const [
-                        FontVariation('wght', 400),
-                      ],
-                      color: AppColor.g900,
-                    ),
-                    keyboardType: TextInputType.multiline,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: '메세지 보내기',
-                      hintStyle: TextStyle(
-                        fontFamily: pretendardFont,
-                        fontSize: 14.sp,
-                        fontVariations: const [
-                          FontVariation('wght', 300),
-                        ],
-                        color: AppColor.g500,
-                      ),
-                      contentPadding: const EdgeInsets.all(18).w,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  color: AppColor.blue,
-                  icon: const Icon(Icons.translate_rounded),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  color: AppColor.blue,
-                  icon: const Icon(Icons.send_rounded),
-                ),
-              ],
-            ),
-          ),
+          ChatBottomBar(docId: docId),
         ],
       ),
     );

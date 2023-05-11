@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dagather_frontend/components/app_bar.dart';
 import 'package:dagather_frontend/models/chat_model.dart';
+import 'package:dagather_frontend/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../components/chat.dart';
-//import 'dart:developer' as developer;
 
 class ChatsScreen extends StatelessWidget {
   ChatsScreen({super.key});
@@ -17,28 +18,18 @@ class ChatsScreen extends StatelessWidget {
         toFirestore: (chat, _) => chat.toJson(),
       );
 
-  String _getUserName(ChatModel chatModel) {
+  UserModel _getUser(ChatModel chatModel) {
     if (FirebaseAuth.instance.currentUser!.uid == chatModel.user1.uid) {
-      return chatModel.user2.name;
+      return chatModel.user2;
     } else {
-      return chatModel.user1.name;
-    }
-  }
-
-  String _getImageUrl(ChatModel chatModel) {
-    if (FirebaseAuth.instance.currentUser!.uid == chatModel.user1.uid) {
-      return chatModel.user2.imgUrl;
-    } else {
-      return chatModel.user1.imgUrl;
+      return chatModel.user1;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("채팅"),
-      ),
+      appBar: BaseAppBar("채팅"),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SingleChildScrollView(
@@ -61,12 +52,13 @@ class ChatsScreen extends StatelessWidget {
                   shrinkWrap: true,
                   itemCount: snapshot.data!.size,
                   itemBuilder: (context, index) {
+                    final ChatModel chat = snapshot.data!.docs[index].data();
                     return Chat(
-                      name: _getUserName(snapshot.data!.docs[index].data()),
-                      imageUrl: _getImageUrl(snapshot.data!.docs[index].data()),
-                      lastMessage:
-                          snapshot.data!.docs[index].data().lastMessage,
-                      lastTime: snapshot.data!.docs[index].data().lastTime,
+                      id: snapshot.data!.docs[index].id,
+                      name: _getUser(chat).name,
+                      imageUrl: _getUser(chat).imgUrl,
+                      lastMessage: chat.lastMessage,
+                      lastTime: chat.lastTime,
                     );
                   },
                   separatorBuilder: (context, index) {

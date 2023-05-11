@@ -15,15 +15,13 @@ class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   Future<UserCredential> _signInWithGoogle() async {
-    final isSignedIn = await GoogleSignIn().isSignedIn();
-    final currentUser = GoogleSignIn().currentUser;
-    final currentUser2 = FirebaseAuth.instance.currentUser;
-    developer.log('isSignedIn: $isSignedIn', name: "user-test");
-    developer.log('googlesignin-user: $currentUser', name: "user-test");
-    developer.log('firebase-user: $currentUser2', name: "user-test");
-
     final GoogleSignInAccount? user = await GoogleSignIn().signIn();
+    final isSignedIn = await GoogleSignIn().isSignedIn();
+    final currentUser = FirebaseAuth.instance.currentUser;
+    developer.log('googlesignin-user: $currentUser', name: "user-test");
     developer.log('firebase-user: $user', name: "user-test");
+    developer.log('isSignedIn: $isSignedIn', name: "user-test");
+
     final GoogleSignInAuthentication? googleAuth = await user?.authentication;
     final OAuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,

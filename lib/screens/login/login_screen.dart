@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'dart:developer' as developer;
 
 import '../../utilities/fonts.dart';
 
@@ -16,12 +15,6 @@ class LoginScreen extends StatelessWidget {
 
   Future<UserCredential> _signInWithGoogle() async {
     final GoogleSignInAccount? user = await GoogleSignIn().signIn();
-    final isSignedIn = await GoogleSignIn().isSignedIn();
-    final currentUser = FirebaseAuth.instance.currentUser;
-    developer.log('googlesignin-user: $currentUser', name: "user-test");
-    developer.log('firebase-user: $user', name: "user-test");
-    developer.log('isSignedIn: $isSignedIn', name: "user-test");
-
     final GoogleSignInAuthentication? googleAuth = await user?.authentication;
     final OAuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,

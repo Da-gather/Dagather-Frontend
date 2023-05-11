@@ -33,42 +33,50 @@ class ChatsScreen extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SingleChildScrollView(
-          child: StreamBuilder(
-            stream: _chatsRef.snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (snapshot.hasError) {
-                throw Error();
-              }
-              if (!snapshot.hasData) {
-                return const Text("no data");
-              } else {
-                return ListView.separated(
-                  physics: const ClampingScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: snapshot.data!.size,
-                  itemBuilder: (context, index) {
-                    final ChatModel chat = snapshot.data!.docs[index].data();
-                    return Chat(
-                      id: snapshot.data!.docs[index].id,
-                      name: _getUser(chat).name,
-                      imageUrl: _getUser(chat).imgUrl,
-                      lastMessage: chat.lastMessage,
-                      lastTime: chat.lastTime,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 8.h,
+              ),
+              StreamBuilder(
+                stream: _chatsRef.snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
-                  },
-                  separatorBuilder: (context, index) {
-                    return SizedBox(
-                      height: 12.h,
+                  }
+                  if (snapshot.hasError) {
+                    throw Error();
+                  }
+                  if (!snapshot.hasData) {
+                    return const Text("no data");
+                  } else {
+                    return ListView.separated(
+                      physics: const ClampingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.size,
+                      itemBuilder: (context, index) {
+                        final ChatModel chat =
+                            snapshot.data!.docs[index].data();
+                        return Chat(
+                          id: snapshot.data!.docs[index].id,
+                          name: _getUser(chat).name,
+                          imageUrl: _getUser(chat).imgUrl,
+                          lastMessage: chat.lastMessage,
+                          lastTime: chat.lastTime,
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(
+                          height: 12.h,
+                        );
+                      },
                     );
-                  },
-                );
-              }
-            },
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ),

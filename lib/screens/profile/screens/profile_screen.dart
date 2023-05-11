@@ -2,161 +2,269 @@ import 'dart:ui';
 
 import 'package:blobs/blobs.dart';
 import 'package:dagather_frontend/components/app_bar.dart';
-import 'package:dagather_frontend/components/base_small_button.dart';
-import 'package:dagather_frontend/components/mission.dart';
-import 'package:dagather_frontend/screens/profile/screens/profile_edit_screen.dart';
-import 'package:dagather_frontend/screens/profile/screens/profile_screen.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../components/account_action.dart';
+import '../components/tag.dart';
 
-class AccountScreen extends StatelessWidget {
-  const AccountScreen({super.key});
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BaseAppBar("계정 관리"),
+      appBar: BaseAppBar("프로필"),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(
+              height: 8.h,
+            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  SizedBox(
-                    height: 52.h,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                          width: 52.h,
-                          height: 52.h,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.r),
-                            image: const DecorationImage(
-                              fit: BoxFit.cover,
-                              alignment: FractionalOffset.center,
-                              image: NetworkImage(
-                                  "https://images.unsplash.com/photo-1605434700731-331ca2458a77?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1365&q=80"),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 12.w,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "홍길동",
-                              style: TextStyle(
-                                fontFamily: pretendardFont,
-                                fontSize: 16.sp,
-                                fontVariations: const [
-                                  FontVariation('wght', 700),
-                                ],
-                                color: AppColor.g800,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 4.h,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "🇨🇳 중국",
-                                  style: TextStyle(
-                                    fontFamily: pretendardFont,
-                                    fontSize: 14.sp,
-                                    fontVariations: const [
-                                      FontVariation('wght', 600),
-                                    ],
-                                    color: AppColor.g600,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 6.w,
-                                ),
-                                Text(
-                                  "22",
-                                  style: TextStyle(
-                                    fontFamily: pretendardFont,
-                                    fontSize: 14.sp,
-                                    fontVariations: const [
-                                      FontVariation('wght', 600),
-                                    ],
-                                    color: AppColor.g600,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 6.w,
-                                ),
-                                Text(
-                                  "여자",
-                                  style: TextStyle(
-                                    fontFamily: pretendardFont,
-                                    fontSize: 14.sp,
-                                    fontVariations: const [
-                                      FontVariation('wght', 600),
-                                    ],
-                                    color: AppColor.g600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
+                  Container(
+                    height: 300.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.r),
+                      image: const DecorationImage(
+                        fit: BoxFit.cover,
+                        alignment: FractionalOffset.center,
+                        image: NetworkImage(
+                            "https://images.unsplash.com/photo-1605434700731-331ca2458a77?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1365&q=80"),
+                      ),
                     ),
                   ),
                   SizedBox(
-                    height: 20.h,
+                    height: 24.h,
                   ),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: BaseSmallButton(
-                          textColor: AppColor.g400,
-                          backgroundColor: AppColor.g200,
-                          text: "프로필 수정",
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ProfileEditScreen(),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Ariana Grande",
+                            style: TextStyle(
+                              fontFamily: pretendardFont,
+                              fontSize: 20.sp,
+                              fontVariations: const [
+                                FontVariation('wght', 700),
+                              ],
+                              color: AppColor.g800,
                             ),
                           ),
+                          SizedBox(
+                            height: 2.h,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "🇨🇳  중국",
+                                style: TextStyle(
+                                  fontFamily: pretendardFont,
+                                  fontSize: 14.sp,
+                                  fontVariations: const [
+                                    FontVariation('wght', 700),
+                                  ],
+                                  color: AppColor.g600,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 6.w,
+                              ),
+                              Text(
+                                "22",
+                                style: TextStyle(
+                                  fontFamily: pretendardFont,
+                                  fontSize: 16.sp,
+                                  fontVariations: const [
+                                    FontVariation('wght', 700),
+                                  ],
+                                  color: AppColor.g600,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 6.w,
+                              ),
+                              Text(
+                                "여자",
+                                style: TextStyle(
+                                  fontFamily: pretendardFont,
+                                  fontSize: 16.sp,
+                                  fontVariations: const [
+                                    FontVariation('wght', 700),
+                                  ],
+                                  color: AppColor.g600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        style: TextButton.styleFrom(
+                          backgroundColor: AppColor.yellow4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8).r,
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 14.h,
+                            horizontal: 16.w,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 8.w,
-                      ),
-                      Expanded(
-                        child: BaseSmallButton(
-                          textColor: AppColor.g300,
-                          backgroundColor: AppColor.g600,
-                          text: "내 프로필 확인하기",
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ProfileScreen(),
-                            ),
+                        child: Text(
+                          '친구 신청',
+                          style: TextStyle(
+                            fontFamily: pretendardFont,
+                            fontSize: 14.sp,
+                            fontVariations: const [
+                              FontVariation('wght', 700),
+                            ],
+                            color: AppColor.g900,
                           ),
                         ),
                       ),
                     ],
                   ),
+                  SizedBox(
+                    height: 32.h,
+                  ),
+                  Text(
+                    "자기소개",
+                    style: FontStyle.captionTextStyle,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Text(
+                    "안녕하세요! 저는 현재 강남구에 사는 홍길동입니다. 저는 대화가 잘 통하는 친구를 사귀고 싶어요. 같이 다양한 정보를 교류하며 나누고 싶습니다.",
+                    style: TextStyle(
+                      fontFamily: pretendardFont,
+                      fontSize: 15.sp,
+                      height: 1.55,
+                      letterSpacing: -0.2,
+                      fontVariations: const [
+                        FontVariation('wght', 500),
+                      ],
+                      color: AppColor.g800,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32.h,
+                  ),
+                  Text(
+                    "거주지",
+                    style: FontStyle.captionTextStyle,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Text(
+                    "서울특별시",
+                    style: TextStyle(
+                      fontFamily: pretendardFont,
+                      fontSize: 15.sp,
+                      letterSpacing: -0.2,
+                      fontVariations: const [
+                        FontVariation('wght', 500),
+                      ],
+                      color: AppColor.g800,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32.h,
+                  ),
+                  Text(
+                    "거주기간",
+                    style: FontStyle.captionTextStyle,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Text(
+                    "3년 이내",
+                    style: TextStyle(
+                      fontFamily: pretendardFont,
+                      fontSize: 15.sp,
+                      letterSpacing: -0.2,
+                      fontVariations: const [
+                        FontVariation('wght', 500),
+                      ],
+                      color: AppColor.g800,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32.h,
+                  ),
+                  Text(
+                    "가입 목적",
+                    style: FontStyle.captionTextStyle,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Wrap(
+                    direction: Axis.horizontal,
+                    alignment: WrapAlignment.start,
+                    spacing: 4.w,
+                    runSpacing: 4.h,
+                    children: List.generate(3, (index) => const Tag()),
+                  ),
+                  SizedBox(
+                    height: 32.h,
+                  ),
+                  Text(
+                    "관심사",
+                    style: FontStyle.captionTextStyle,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColor.redLight,
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      child: Center(
+                        child: Text(
+                          "총 1개의 관심사가 겹치네요",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: pretendardFont,
+                            fontSize: 13.sp,
+                            fontVariations: const [
+                              FontVariation('wght', 700),
+                            ],
+                            color: AppColor.red,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Wrap(
+                      direction: Axis.horizontal,
+                      alignment: WrapAlignment.start,
+                      spacing: 4.w,
+                      runSpacing: 4.h,
+                      children: List.generate(8, (index) => const Tag())),
+                  // WsmBoxWidget()
                 ],
               ),
             ),
@@ -172,25 +280,6 @@ class AccountScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    "진행 중인 미션 모두 보기",
-                    style: FontStyle.captionTextStyle,
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  const Mission(),
-                  SizedBox(
-                    height: 12.h,
-                  ),
-                  const Mission(),
-                  SizedBox(
-                    height: 12.h,
-                  ),
-                  const Mission(),
-                  SizedBox(
-                    height: 32.h,
-                  ),
                   Text(
                     "미션 전체 통게",
                     style: FontStyle.captionTextStyle,
@@ -423,76 +512,6 @@ class AccountScreen extends StatelessWidget {
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 24.h),
-              child: Divider(
-                thickness: 8.h,
-                color: AppColor.g100,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    "계정",
-                    style: FontStyle.captionTextStyle,
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  AccountAction(
-                    text: '이메일',
-                    secondText: 'ajfl@gmail.com',
-                  ),
-                  GestureDetector(
-                    onTap: FirebaseAuth.instance.signOut,
-                    child: AccountAction(
-                      text: '로그아웃',
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: AccountAction(
-                      text: '회원탈퇴',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 24.h),
-              child: Divider(
-                thickness: 8.h,
-                color: AppColor.g100,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    "기타",
-                    style: FontStyle.captionTextStyle,
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  AccountAction(
-                    text: '앱 버전',
-                    secondText: 'v1.0',
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: AccountAction(
-                      text: '신고하기',
                     ),
                   ),
                 ],

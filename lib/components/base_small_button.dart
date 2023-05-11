@@ -1,0 +1,44 @@
+import 'dart:ui';
+
+import 'package:dagather_frontend/utilities/fonts.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+class BaseSmallButton extends StatelessWidget {
+  final Color textColor;
+  final Color backgroundColor;
+  final String text;
+  final void Function() onPressed;
+
+  const BaseSmallButton(
+      {super.key,
+      required this.textColor,
+      required this.backgroundColor,
+      required this.text,
+      required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        backgroundColor: backgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8).r,
+        ),
+        padding: EdgeInsets.symmetric(vertical: 14.h),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontFamily: pretendardFont,
+          fontSize: 14.sp,
+          fontVariations: const [
+            FontVariation('wght', 700),
+          ],
+          color: textColor,
+        ),
+      ),
+    );
+  }
+}

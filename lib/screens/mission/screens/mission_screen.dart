@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:dagather_frontend/components/app_bar.dart';
+import 'package:dagather_frontend/components/base_small_button.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:blobs/blobs.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../components/mission.dart';
+import '../../../components/mission.dart';
 import '../components/user_mission_state.dart';
 
 class MissionScreen extends StatelessWidget {
@@ -26,7 +27,7 @@ class MissionScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SizedBox(
-                  height: 24.h,
+                  height: 8.h,
                 ),
                 Text(
                   "이번 미션",
@@ -44,55 +45,23 @@ class MissionScreen extends StatelessWidget {
                     Flexible(
                       flex: 1,
                       fit: FlexFit.tight,
-                      child: TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
+                      child: BaseSmallButton(
+                          textColor: AppColor.g400,
                           backgroundColor: AppColor.g200,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8).r,
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                        ),
-                        child: Text(
-                          "건너뛰기",
-                          style: TextStyle(
-                            fontFamily: pretendardFont,
-                            fontSize: 14.sp,
-                            fontVariations: const [
-                              FontVariation('wght', 600),
-                            ],
-                            color: AppColor.g400,
-                          ),
-                        ),
-                      ),
+                          text: "건너뛰기",
+                          onPressed: () {}),
                     ),
                     SizedBox(
-                      width: 4.w,
+                      width: 8.w,
                     ),
                     Flexible(
                       flex: 3,
                       fit: FlexFit.tight,
-                      child: TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
+                      child: BaseSmallButton(
+                          textColor: AppColor.g200,
                           backgroundColor: AppColor.g800,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8).r,
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                        ),
-                        child: Text(
-                          "미션 완료하기",
-                          style: TextStyle(
-                            fontFamily: pretendardFont,
-                            fontSize: 14.sp,
-                            fontVariations: const [
-                              FontVariation('wght', 700),
-                            ],
-                            color: AppColor.g200,
-                          ),
-                        ),
-                      ),
+                          text: "미션 완료하기",
+                          onPressed: () {}),
                     ),
                   ],
                 ),
@@ -143,15 +112,12 @@ class MissionScreen extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            height: 24.h,
-          ),
-          Divider(
-            thickness: 8.h,
-            color: AppColor.g100,
-          ),
-          SizedBox(
-            height: 24.h,
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 24.h),
+            child: Divider(
+              thickness: 8.h,
+              color: AppColor.g100,
+            ),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.h),
@@ -244,6 +210,9 @@ class MissionScreen extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          SizedBox(
+            height: 36.h,
           ),
         ],
       ),

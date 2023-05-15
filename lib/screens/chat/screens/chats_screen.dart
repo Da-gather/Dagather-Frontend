@@ -30,9 +30,9 @@ class ChatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar("채팅"),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
               SizedBox(
@@ -64,7 +64,9 @@ class ChatsScreen extends StatelessWidget {
                           name: _getUser(chat).name,
                           imageUrl: _getUser(chat).imgUrl,
                           lastMessage: chat.lastMessage,
+                          lastSender: chat.lastSender,
                           lastTime: chat.lastTime,
+                          notReadCount: chat.msgNotRead,
                         );
                       },
                       separatorBuilder: (context, index) {

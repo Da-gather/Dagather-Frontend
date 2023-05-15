@@ -3,18 +3,22 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import '../screens/chat_screen.dart';
+import 'dart:developer' as developer;
 
 class Chat extends StatelessWidget {
   final String id;
   final String name;
   final String imageUrl;
   final String lastMessage;
+  final String lastSender;
   final Timestamp lastTime;
+  final int notReadCount;
 
   const Chat({
     super.key,
@@ -23,6 +27,8 @@ class Chat extends StatelessWidget {
     required this.imageUrl,
     required this.lastMessage,
     required this.lastTime,
+    required this.notReadCount,
+    required this.lastSender,
   });
 
   String _formatTimeStamp(Timestamp timestamp) {
@@ -32,6 +38,43 @@ class Chat extends StatelessWidget {
         DateTime.fromMicrosecondsSinceEpoch(createdInNum * 1000);
     String dateString = DateFormat.jm().format(date);
     return dateString;
+  }
+
+  Widget _getReadWidget() {
+    developer.log(lastSender);
+    developer.log(FirebaseAuth.instance.currentUser!.uid);
+    developer
+        .log((lastSender == FirebaseAuth.instance.currentUser!.uid).toString());
+
+    if (lastSender == FirebaseAuth.instance.currentUser!.uid) {
+      return Text(
+        "전송",
+        style: TextStyle(
+          fontFamily: pretendardFont,
+          fontSize: 10.sp,
+          fontVariations: const [
+            FontVariation('wght', 700),
+          ],
+          color: AppColor.g300,
+        ),
+      );
+    } else {
+      if (notReadCount != 0) {
+        return NotRead(notReadCount);
+      } else {
+        return Text(
+          "읽음",
+          style: TextStyle(
+            fontFamily: pretendardFont,
+            fontSize: 10.sp,
+            fontVariations: const [
+              FontVariation('wght', 700),
+            ],
+            color: AppColor.g400,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -60,92 +103,128 @@ class Chat extends StatelessWidget {
             horizontal: 16.w,
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 64.w,
-                height: 64.w,
                 margin: EdgeInsets.only(right: 12.w),
-                decoration: BoxDecoration(
+                child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.r),
-                  image: DecorationImage(
+                  child: CachedNetworkImage(
+                    width: 68.w,
+                    height: 68.w,
                     fit: BoxFit.cover,
-                    alignment: FractionalOffset.center,
-                    image: NetworkImage(imageUrl),
+                    imageUrl: imageUrl,
+                    placeholder: (context, url) => Container(
+                      color: AppColor.g200,
+                    ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
                 ),
               ),
               Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    right: 20.w,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            name,
-                            style: TextStyle(
-                              fontFamily: pretendardFont,
-                              fontSize: 14.sp,
-                              fontVariations: const [
-                                FontVariation('wght', 700),
-                              ],
-                              color: AppColor.g800,
+                child: SizedBox(
+                  height: 68.w,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right: 20.w,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              name,
+                              style: TextStyle(
+                                fontFamily: pretendardFont,
+                                fontSize: 15.sp,
+                                fontVariations: const [
+                                  FontVariation('wght', 700),
+                                ],
+                                color: AppColor.g800,
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 4.h,
-                          ),
-                          Text(
-                            lastMessage,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: pretendardFont,
-                              fontSize: 13.sp,
-                              fontVariations: const [
-                                FontVariation('wght', 500),
-                              ],
-                              color: AppColor.g700,
+                            SizedBox(
+                              height: 4.h,
                             ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        _formatTimeStamp(lastTime),
-                        style: TextStyle(
-                          fontFamily: pretendardFont,
-                          fontSize: 12.sp,
-                          fontVariations: const [
-                            FontVariation('wght', 300),
+                            Text(
+                              lastMessage,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: pretendardFont,
+                                fontSize: 14.sp,
+                                fontVariations: const [
+                                  FontVariation('wght', 600),
+                                ],
+                                color: AppColor.g700,
+                              ),
+                            ),
                           ],
-                          color: AppColor.g400,
                         ),
-                      )
-                    ],
+                        Text(
+                          _formatTimeStamp(lastTime),
+                          style: TextStyle(
+                            fontFamily: pretendardFont,
+                            fontSize: 12.sp,
+                            fontVariations: const [
+                              FontVariation('wght', 400),
+                            ],
+                            color: AppColor.g400,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-              Text(
-                "읽음",
-                style: TextStyle(
-                  fontFamily: pretendardFont,
-                  fontSize: 10.sp,
-                  fontVariations: const [
-                    FontVariation('wght', 700),
-                  ],
-                  color: AppColor.g300,
-                ),
-              ),
+              _getReadWidget(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class NotRead extends StatelessWidget {
+  final int num;
+  const NotRead(
+    this.num, {
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 8.w,
+          height: 8.w,
+          decoration: const BoxDecoration(
+            color: AppColor.red,
+            shape: BoxShape.circle,
+          ),
+        ),
+        SizedBox(
+          width: 4.w,
+        ),
+        Text(
+          num.toString(),
+          style: TextStyle(
+            fontFamily: pretendardFont,
+            fontSize: 12.sp,
+            fontVariations: const [
+              FontVariation('wght', 700),
+            ],
+            color: AppColor.red,
+          ),
+        ),
+      ],
     );
   }
 }

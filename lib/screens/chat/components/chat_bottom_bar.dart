@@ -8,6 +8,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+enum MessageType {
+  text,
+  image,
+}
+
 class ChatBottomBar extends StatefulWidget {
   final String docId;
 
@@ -24,7 +29,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
     final MessageModel data = MessageModel(
         content: _textController.text,
         sender: FirebaseAuth.instance.currentUser!.uid,
-        type: "text",
+        type: MessageType.text.name,
         read: false,
         created: Timestamp.now());
 
@@ -37,8 +42,35 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
               MessageModel.fromJson(snapshots.data()!),
           toFirestore: (message, _) => message.toJson(),
         )
-        .add(data);
+        .add(data)
+        .then(
+      (value) {
+        _updateChatData({
+          "last_msg": data.content,
+          "last_sender": data.sender,
+          "last_time": data.created,
+        });
+      },
+    ).then((value) {
+      _increaseNotReadMsgCount();
+    });
+
     _textController.clear();
+    setState(() {});
+  }
+
+  void _increaseNotReadMsgCount() async {
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(widget.docId)
+        .update({"msg_not_read": FieldValue.increment(1)});
+  }
+
+  void _updateChatData(object) async {
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(widget.docId)
+        .update(object);
   }
 
   @override
@@ -65,7 +97,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
                 fontFamily: pretendardFont,
                 fontSize: 14.sp,
                 fontVariations: const [
-                  FontVariation('wght', 400),
+                  FontVariation('wght', 500),
                 ],
                 color: AppColor.g900,
               ),
@@ -77,7 +109,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
                   fontFamily: pretendardFont,
                   fontSize: 14.sp,
                   fontVariations: const [
-                    FontVariation('wght', 300),
+                    FontVariation('wght', 400),
                   ],
                   color: AppColor.g500,
                 ),

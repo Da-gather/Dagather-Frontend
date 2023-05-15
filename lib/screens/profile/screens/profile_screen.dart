@@ -1,7 +1,9 @@
 import 'dart:ui';
 
-import 'package:blobs/blobs.dart';
 import 'package:dagather_frontend/components/app_bar.dart';
+import 'package:dagather_frontend/components/base_dialog.dart';
+import 'package:dagather_frontend/components/base_medium_button.dart';
+import 'package:dagather_frontend/screens/mission/components/missions_container.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
@@ -64,7 +66,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(
-                            height: 2.h,
+                            height: 3.h,
                           ),
                           Row(
                             children: [
@@ -111,29 +113,21 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
-                          backgroundColor: AppColor.yellow4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8).r,
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: 14.h,
-                            horizontal: 16.w,
-                          ),
-                        ),
-                        child: Text(
-                          '친구 신청',
-                          style: TextStyle(
-                            fontFamily: pretendardFont,
-                            fontSize: 14.sp,
-                            fontVariations: const [
-                              FontVariation('wght', 700),
-                            ],
-                            color: AppColor.g900,
-                          ),
-                        ),
+                      BaseMidiumButton(
+                        textColor: AppColor.g900,
+                        backgroundColor: AppColor.yellow4,
+                        text: "친구 신청",
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return BaseDialog(
+                                  buttonText: '확인',
+                                  content: '친구 신청이 완료되었습니다.',
+                                  onPressed: () {},
+                                );
+                              });
+                        },
                       ),
                     ],
                   ),
@@ -437,83 +431,7 @@ class ProfileScreen extends StatelessWidget {
                   SizedBox(
                     height: 8.h,
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.g100,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: GridView(
-                      physics: const ClampingScrollPhysics(),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 20.h,
-                      ),
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 5,
-                        crossAxisSpacing: 8.h,
-                        mainAxisSpacing: 16.h,
-                      ),
-                      children: [
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1234"],
-                          styles: BlobStyles(
-                            color: AppColor.green,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1235"],
-                          styles: BlobStyles(
-                            color: AppColor.red,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1236"],
-                          styles: BlobStyles(
-                            color: AppColor.yellow4,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1237"],
-                          styles: BlobStyles(
-                            color: AppColor.red,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1238"],
-                          styles: BlobStyles(
-                            color: AppColor.blue,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1239"],
-                          styles: BlobStyles(
-                            color: AppColor.yellow4,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1240"],
-                          styles: BlobStyles(
-                            color: AppColor.green,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  const MissionsContainer(),
                 ],
               ),
             ),

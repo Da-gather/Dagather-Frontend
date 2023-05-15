@@ -1,9 +1,11 @@
 import 'dart:ui';
 
-import 'package:blobs/blobs.dart';
+import 'package:dagather_frontend/components/action_dialog.dart';
 import 'package:dagather_frontend/components/app_bar.dart';
-import 'package:dagather_frontend/components/base_small_button.dart';
+import 'package:dagather_frontend/components/base_medium_button.dart';
+import 'package:dagather_frontend/components/information_dialog.dart';
 import 'package:dagather_frontend/components/mission.dart';
+import 'package:dagather_frontend/screens/mission/components/missions_container.dart';
 import 'package:dagather_frontend/screens/profile/screens/profile_edit_screen.dart';
 import 'package:dagather_frontend/screens/profile/screens/profile_screen.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
@@ -12,12 +14,26 @@ import 'package:dagather_frontend/utilities/styles.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../components/account_action.dart';
 
 class AccountScreen extends StatelessWidget {
-  const AccountScreen({super.key});
+  AccountScreen({super.key});
+
+  final Uri _url = Uri.parse(
+      'https://docs.google.com/forms/d/e/1FAIpQLSf-fWUDEmkrM0LlUxjnSciKaC0j9Ty7Pb4tt4SQp3kx9_zhYg/viewform');
+
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(
+      _url,
+      mode: LaunchMode.inAppWebView,
+    )) {
+      throw Exception('Could not launch $_url');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +143,7 @@ class AccountScreen extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: BaseSmallButton(
+                        child: BaseMidiumButton(
                           textColor: AppColor.g400,
                           backgroundColor: AppColor.g200,
                           text: "프로필 수정",
@@ -143,7 +159,7 @@ class AccountScreen extends StatelessWidget {
                         width: 8.w,
                       ),
                       Expanded(
-                        child: BaseSmallButton(
+                        child: BaseMidiumButton(
                           textColor: AppColor.g300,
                           backgroundColor: AppColor.g600,
                           text: "내 프로필 확인하기",
@@ -249,9 +265,22 @@ class AccountScreen extends StatelessWidget {
                       SizedBox(
                         width: 4.w,
                       ),
-                      SvgPicture.asset(
-                        'assets/icons/ic_help_center.svg',
-                        width: 16.w,
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const InformationDialog(
+                                  title: "미션의 카테고리는 무엇이 있나요?",
+                                  content:
+                                      '미션의 카테고리는 총 4개가 있으며, 색상으로 구분됩니다. 빨간색은 000, 노란색은 000, 초록색은 000, 파란색은 000입니다.',
+                                );
+                              });
+                        },
+                        child: SvgPicture.asset(
+                          'assets/icons/ic_help_center.svg',
+                          width: 16.w,
+                        ),
                       ),
                     ],
                   ),
@@ -339,92 +368,29 @@ class AccountScreen extends StatelessWidget {
                       SizedBox(
                         width: 4.w,
                       ),
-                      SvgPicture.asset(
-                        'assets/icons/ic_help_center.svg',
-                        width: 16.w,
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const InformationDialog(
+                                  title: "최근에 달성한 미션 10개란?",
+                                  content:
+                                      '완료한 모든 미션 중 가장 최근에 달성한 미션 10개까지 볼 수 있습니다.',
+                                );
+                              });
+                        },
+                        child: SvgPicture.asset(
+                          'assets/icons/ic_help_center.svg',
+                          width: 16.w,
+                        ),
                       ),
                     ],
                   ),
                   SizedBox(
                     height: 8.h,
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.g100,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: GridView(
-                      physics: const ClampingScrollPhysics(),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 20.h,
-                      ),
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 5,
-                        crossAxisSpacing: 8.h,
-                        mainAxisSpacing: 16.h,
-                      ),
-                      children: [
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1234"],
-                          styles: BlobStyles(
-                            color: AppColor.green,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1235"],
-                          styles: BlobStyles(
-                            color: AppColor.red,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1236"],
-                          styles: BlobStyles(
-                            color: AppColor.yellow4,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1237"],
-                          styles: BlobStyles(
-                            color: AppColor.red,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1238"],
-                          styles: BlobStyles(
-                            color: AppColor.blue,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1239"],
-                          styles: BlobStyles(
-                            color: AppColor.yellow4,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                        Blob.fromID(
-                          size: 64.w,
-                          id: const ["7-4-1240"],
-                          styles: BlobStyles(
-                            color: AppColor.green,
-                            fillType: BlobFillType.fill,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  const MissionsContainer(),
                 ],
               ),
             ),
@@ -449,7 +415,7 @@ class AccountScreen extends StatelessWidget {
                   ),
                   AccountAction(
                     text: '이메일',
-                    secondText: 'ajfl@gmail.com',
+                    secondText: FirebaseAuth.instance.currentUser!.email!,
                   ),
                   GestureDetector(
                     onTap: FirebaseAuth.instance.signOut,
@@ -458,7 +424,19 @@ class AccountScreen extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ActionDialog(
+                              buttonColor: AppColor.red,
+                              buttonText: '탈퇴하기',
+                              content:
+                                  'Da:gather를 정말 탈퇴하시겠습니까?\n탈퇴하면 모든 정보가 삭제되며 복구가 불가능합니다.',
+                              onPressed: () {},
+                            );
+                          });
+                    },
                     child: AccountAction(
                       text: '회원탈퇴',
                     ),
@@ -490,7 +468,7 @@ class AccountScreen extends StatelessWidget {
                     secondText: 'v1.0',
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: _launchUrl,
                     child: AccountAction(
                       text: '신고하기',
                     ),

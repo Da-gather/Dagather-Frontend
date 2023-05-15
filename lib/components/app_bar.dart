@@ -7,13 +7,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BaseAppBar extends StatelessWidget with PreferredSizeWidget {
   final String appBarTitle;
+  final List<Widget>? actions;
+  final int height = 56;
 
-  BaseAppBar(this.appBarTitle, {Key? key}) : super(key: key);
+  BaseAppBar(this.appBarTitle, {super.key, this.actions});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      toolbarHeight: 56.h,
+      actions: actions,
+      actionsIconTheme: IconThemeData(
+        color: AppColor.g800,
+        size: 24.w,
+      ),
+      toolbarHeight: height.h,
       iconTheme: const IconThemeData(
         color: AppColor.g800,
       ),
@@ -34,5 +41,5 @@ class BaseAppBar extends StatelessWidget with PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(56.h);
+  Size get preferredSize => Size.fromHeight(height.h);
 }

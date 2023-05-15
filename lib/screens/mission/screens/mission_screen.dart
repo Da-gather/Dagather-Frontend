@@ -1,12 +1,13 @@
 import 'dart:ui';
 
+import 'package:dagather_frontend/components/action_dialog.dart';
 import 'package:dagather_frontend/components/app_bar.dart';
-import 'package:dagather_frontend/components/base_small_button.dart';
+import 'package:dagather_frontend/components/base_medium_button.dart';
+import 'package:dagather_frontend/screens/mission/components/missions_container.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:blobs/blobs.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../components/mission.dart';
@@ -45,11 +46,23 @@ class MissionScreen extends StatelessWidget {
                     Flexible(
                       flex: 1,
                       fit: FlexFit.tight,
-                      child: BaseSmallButton(
+                      child: BaseMidiumButton(
                           textColor: AppColor.g400,
                           backgroundColor: AppColor.g200,
                           text: "건너뛰기",
-                          onPressed: () {}),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return ActionDialog(
+                                    buttonColor: AppColor.red,
+                                    buttonText: '건너뛰기',
+                                    content:
+                                        '미션을 건너뛰시겠습니까?\n상대방의 미션도 자동으로 변경되니 상대방과의 충분한 상의 후 다음 미션으로 변경하시길 바랍니다.',
+                                    onPressed: () {},
+                                  );
+                                });
+                          }),
                     ),
                     SizedBox(
                       width: 8.w,
@@ -57,11 +70,22 @@ class MissionScreen extends StatelessWidget {
                     Flexible(
                       flex: 3,
                       fit: FlexFit.tight,
-                      child: BaseSmallButton(
+                      child: BaseMidiumButton(
                           textColor: AppColor.g200,
                           backgroundColor: AppColor.g800,
                           text: "미션 완료하기",
-                          onPressed: () {}),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return ActionDialog(
+                                    buttonColor: AppColor.yellow4,
+                                    buttonText: '완료하기',
+                                    content: '미션을 완료하겠습니까?',
+                                    onPressed: () {},
+                                  );
+                                });
+                          }),
                     ),
                   ],
                 ),
@@ -131,83 +155,7 @@ class MissionScreen extends StatelessWidget {
                 SizedBox(
                   height: 8.h,
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.g100,
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: GridView(
-                    physics: const ClampingScrollPhysics(),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 20.h,
-                    ),
-                    shrinkWrap: true,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 5,
-                      crossAxisSpacing: 8.h,
-                      mainAxisSpacing: 16.h,
-                    ),
-                    children: [
-                      Blob.fromID(
-                        size: 64.w,
-                        id: const ["7-4-1234"],
-                        styles: BlobStyles(
-                          color: AppColor.green,
-                          fillType: BlobFillType.fill,
-                        ),
-                      ),
-                      Blob.fromID(
-                        size: 64.w,
-                        id: const ["7-4-1235"],
-                        styles: BlobStyles(
-                          color: AppColor.red,
-                          fillType: BlobFillType.fill,
-                        ),
-                      ),
-                      Blob.fromID(
-                        size: 64.w,
-                        id: const ["7-4-1236"],
-                        styles: BlobStyles(
-                          color: AppColor.yellow4,
-                          fillType: BlobFillType.fill,
-                        ),
-                      ),
-                      Blob.fromID(
-                        size: 64.w,
-                        id: const ["7-4-1237"],
-                        styles: BlobStyles(
-                          color: AppColor.red,
-                          fillType: BlobFillType.fill,
-                        ),
-                      ),
-                      Blob.fromID(
-                        size: 64.w,
-                        id: const ["7-4-1238"],
-                        styles: BlobStyles(
-                          color: AppColor.blue,
-                          fillType: BlobFillType.fill,
-                        ),
-                      ),
-                      Blob.fromID(
-                        size: 64.w,
-                        id: const ["7-4-1239"],
-                        styles: BlobStyles(
-                          color: AppColor.yellow4,
-                          fillType: BlobFillType.fill,
-                        ),
-                      ),
-                      Blob.fromID(
-                        size: 64.w,
-                        id: const ["7-4-1240"],
-                        styles: BlobStyles(
-                          color: AppColor.green,
-                          fillType: BlobFillType.fill,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                const MissionsContainer(),
               ],
             ),
           ),

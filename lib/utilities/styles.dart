@@ -14,4 +14,32 @@ class FontStyle {
     ],
     color: AppColor.g400,
   );
+
+  static var timeTextStyle = TextStyle(
+    fontFamily: pretendardFont,
+    fontSize: 12.sp,
+    fontVariations: const [
+      FontVariation('wght', 400),
+    ],
+    color: AppColor.g400,
+  );
+
+  static var messageTextStyle = TextStyle(
+    fontFamily: pretendardFont,
+    fontSize: 14.sp,
+    height: 1.55,
+    fontVariations: const [
+      FontVariation('wght', 500),
+    ],
+    color: AppColor.g800,
+  );
+
+  static var friendRequestTextStyle = TextStyle(
+    fontFamily: pretendardFont,
+    fontSize: 15.sp,
+    fontVariations: const [
+      FontVariation('wght', 700),
+    ],
+    color: AppColor.g800,
+  );
 }

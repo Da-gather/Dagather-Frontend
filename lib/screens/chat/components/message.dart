@@ -1,7 +1,5 @@
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dagather_frontend/utilities/fonts.dart';
+import 'package:dagather_frontend/utilities/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -38,20 +36,13 @@ class Message extends StatelessWidget {
           margin: EdgeInsets.only(right: 6.w),
           child: Text(
             _formatTimeStamp(created),
-            style: TextStyle(
-              fontFamily: pretendardFont,
-              fontSize: 12.sp,
-              fontVariations: const [
-                FontVariation('wght', 400),
-              ],
-              color: AppColor.g400,
-            ),
+            style: FontStyle.timeTextStyle,
           ),
         ),
         Container(
           constraints: BoxConstraints(maxWidth: 270.w),
           decoration: BoxDecoration(
-            color: AppColor.yellow2,
+            color: AppColor.g200,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -65,15 +56,7 @@ class Message extends StatelessWidget {
             ),
             child: Text(
               content,
-              style: TextStyle(
-                fontFamily: pretendardFont,
-                fontSize: 14.sp,
-                height: 1.55,
-                fontVariations: const [
-                  FontVariation('wght', 500),
-                ],
-                color: AppColor.g800,
-              ),
+              style: FontStyle.messageTextStyle,
             ),
           ),
         ),
@@ -89,7 +72,7 @@ class Message extends StatelessWidget {
         Container(
           constraints: BoxConstraints(maxWidth: 270.w),
           decoration: BoxDecoration(
-            color: AppColor.g200,
+            color: AppColor.g300,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -103,15 +86,7 @@ class Message extends StatelessWidget {
             ),
             child: Text(
               content,
-              style: TextStyle(
-                fontFamily: pretendardFont,
-                fontSize: 14.sp,
-                height: 1.55,
-                fontVariations: const [
-                  FontVariation('wght', 500),
-                ],
-                color: AppColor.g800,
-              ),
+              style: FontStyle.messageTextStyle,
             ),
           ),
         ),
@@ -119,14 +94,7 @@ class Message extends StatelessWidget {
           margin: EdgeInsets.only(left: 6.w),
           child: Text(
             _formatTimeStamp(created),
-            style: TextStyle(
-              fontFamily: pretendardFont,
-              fontSize: 12.sp,
-              fontVariations: const [
-                FontVariation('wght', 400),
-              ],
-              color: AppColor.g400,
-            ),
+            style: FontStyle.timeTextStyle,
           ),
         ),
       ],

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dagather_frontend/screens/mission/screens/mission_screen.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
@@ -19,7 +20,7 @@ class ChatAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      flexibleSpace: _appBar(),
+      flexibleSpace: _appBar(context),
       toolbarHeight: 56.h,
       iconTheme: const IconThemeData(
         color: AppColor.g800,
@@ -34,45 +35,74 @@ class ChatAppBar extends StatelessWidget with PreferredSizeWidget {
         ],
         color: AppColor.g800,
       ),
-      actions: [
-        IconButton(
-          onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MissionScreen(),
-              )),
-          icon: Icon(
-            Icons.more_vert_rounded,
-            size: 24.w,
-            color: AppColor.g600,
-          ),
-        ),
-      ],
     );
   }
 
-  Widget _appBar() {
+  Widget _appBar(context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.only(left: 64.w, top: 14.h, bottom: 14.h),
+        padding:
+            EdgeInsets.only(right: 20.w, left: 64.w, top: 10.h, bottom: 10.h),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CircleAvatar(
-              radius: 16.w,
-              backgroundImage: NetworkImage(imgUrl),
-            ),
-            SizedBox(
-              width: 8.w,
-            ),
-            Text(
-              name,
-              style: TextStyle(
-                fontFamily: pretendardFont,
-                fontSize: 15.sp,
-                fontVariations: const [
-                  FontVariation('wght', 700),
+            Expanded(
+              child: Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(right: 8.w),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100.r),
+                      child: CachedNetworkImage(
+                        width: 32.w,
+                        height: 32.w,
+                        fit: BoxFit.cover,
+                        imageUrl: imgUrl,
+                        placeholder: (context, url) => Container(
+                          color: AppColor.g200,
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      fontFamily: pretendardFont,
+                      fontSize: 15.sp,
+                      fontVariations: const [
+                        FontVariation('wght', 700),
+                      ],
+                      color: AppColor.g800,
+                    ),
+                  ),
                 ],
-                color: AppColor.g800,
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MissionScreen(),
+                  )),
+              style: TextButton.styleFrom(
+                backgroundColor: AppColor.blueLight,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8).r,
+                ),
+              ),
+              child: Text(
+                "미션",
+                style: TextStyle(
+                  fontFamily: pretendardFont,
+                  fontSize: 13.sp,
+                  fontVariations: const [
+                    FontVariation('wght', 700),
+                  ],
+                  color: AppColor.blue,
+                ),
               ),
             ),
           ],

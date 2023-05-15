@@ -4,13 +4,13 @@ import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class BaseSmallButton extends StatelessWidget {
+class BaseMidiumButton extends StatelessWidget {
   final Color textColor;
   final Color backgroundColor;
   final String text;
   final void Function() onPressed;
 
-  const BaseSmallButton(
+  const BaseMidiumButton(
       {super.key,
       required this.textColor,
       required this.backgroundColor,
@@ -26,7 +26,7 @@ class BaseSmallButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8).r,
         ),
-        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+        padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
       ),
       child: Text(
         text,

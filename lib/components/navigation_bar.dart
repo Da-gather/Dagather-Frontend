@@ -18,7 +18,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
   int _selectedIdx = 0;
 
   final List<Widget> _screenList = [
-    const HomeScreen(),
+    HomeScreen(),
     ChatsScreen(),
     AccountScreen(),
   ];

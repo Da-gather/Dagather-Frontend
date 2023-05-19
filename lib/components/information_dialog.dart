@@ -28,7 +28,7 @@ class InformationDialog extends StatelessWidget {
         fontSize: 15.sp,
         height: 1.55,
         fontVariations: const [
-          FontVariation('wght', 800),
+          FontVariation('wght', 700),
         ],
         color: AppColor.g800,
       ),

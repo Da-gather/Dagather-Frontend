@@ -155,7 +155,9 @@ class MissionScreen extends StatelessWidget {
                 SizedBox(
                   height: 8.h,
                 ),
-                const MissionsContainer(),
+                const MissionsContainer(
+                  hasTitle: false,
+                ),
               ],
             ),
           ),

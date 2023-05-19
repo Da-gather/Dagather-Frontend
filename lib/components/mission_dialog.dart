@@ -18,7 +18,7 @@ class MissionDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10.r)),
       ),
-      contentPadding: const EdgeInsets.all(20).w,
+      contentPadding: const EdgeInsets.all(24).w,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -108,7 +108,7 @@ class MissionDialog extends StatelessWidget {
             ],
           ),
           SizedBox(
-            height: 20.h,
+            height: 24.h,
           ),
           Container(
             decoration: BoxDecoration(

@@ -1,9 +1,11 @@
+import 'package:dagather_frontend/provider/user_provider.dart';
 import 'package:dagather_frontend/screens/login/login_screen.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -11,7 +13,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -42,7 +51,7 @@ class MyApp extends StatelessWidget {
           home: child,
         );
       },
-      child: LoginScreen(),
+      child: const LoginScreen(),
     );
   }
 }

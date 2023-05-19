@@ -3,11 +3,12 @@ import 'dart:ui';
 import 'package:dagather_frontend/components/action_dialog.dart';
 import 'package:dagather_frontend/components/app_bar.dart';
 import 'package:dagather_frontend/components/base_medium_button.dart';
-import 'package:dagather_frontend/components/information_dialog.dart';
 import 'package:dagather_frontend/components/mission.dart';
+import 'package:dagather_frontend/screens/mission/components/mission_statistics.dart';
 import 'package:dagather_frontend/screens/mission/components/missions_container.dart';
 import 'package:dagather_frontend/screens/profile/screens/profile_edit_screen.dart';
 import 'package:dagather_frontend/screens/profile/screens/profile_screen.dart';
+import 'package:dagather_frontend/services/mission_service.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
@@ -15,7 +16,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../components/account_action.dart';
@@ -34,6 +34,10 @@ class AccountScreen extends StatelessWidget {
       throw Exception('Could not launch $_url');
     }
   }
+
+  final Future<Map<String, dynamic>> _missionStatistics =
+      MissionService.getMissionStatistics(
+          FirebaseAuth.instance.currentUser!.uid);
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +170,9 @@ class AccountScreen extends StatelessWidget {
                           onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const ProfileScreen(),
+                              builder: (context) => ProfileScreen(
+                                uid: FirebaseAuth.instance.currentUser!.uid,
+                              ),
                             ),
                           ),
                         ),
@@ -207,188 +213,38 @@ class AccountScreen extends StatelessWidget {
                   SizedBox(
                     height: 32.h,
                   ),
-                  Text(
-                    "미션 전체 통게",
-                    style: FontStyle.captionTextStyle,
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.blue,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 20.h,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "총 완료한 미션 개수",
-                            style: TextStyle(
-                              fontFamily: pretendardFont,
-                              fontSize: 14.sp,
-                              fontVariations: const [
-                                FontVariation('wght', 600),
-                              ],
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            "30개",
-                            style: TextStyle(
-                              fontFamily: pretendardFont,
-                              fontSize: 14.sp,
-                              fontVariations: const [
-                                FontVariation('wght', 700),
-                              ],
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  FutureBuilder(
+                      future: _missionStatistics,
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          case ConnectionState.none:
+                            return const Center(
+                              child: Text("none"),
+                            );
+                          case ConnectionState.active:
+                          case ConnectionState.done:
+                            if (snapshot.hasError) {
+                              throw Error();
+                            }
+                            if (snapshot.hasData) {
+                              final statistic = snapshot.data!;
+
+                              return MissionStatistics(
+                                  totalCount: statistic["total"],
+                                  redCount: statistic["category0"],
+                                  yellowCount: statistic["category1"],
+                                  greenCount: statistic["category2"],
+                                  blueCount: statistic["category3"]);
+                            }
+                            throw Error();
+                        }
+                      }),
                   SizedBox(
                     height: 32.h,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "완수한 미션의 카테고리별 비율",
-                        style: FontStyle.captionTextStyle,
-                      ),
-                      SizedBox(
-                        width: 4.w,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const InformationDialog(
-                                  title: "미션의 카테고리는 무엇이 있나요?",
-                                  content:
-                                      '미션의 카테고리는 총 4개가 있으며, 색상으로 구분됩니다. 빨간색은 000, 노란색은 000, 초록색은 000, 파란색은 000입니다.',
-                                );
-                              });
-                        },
-                        child: SvgPicture.asset(
-                          'assets/icons/ic_help_center.svg',
-                          width: 16.w,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.g100,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 24.h,
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 16.h,
-                            decoration: BoxDecoration(
-                              color: AppColor.red,
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                              ).r,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 12.h,
-                          ),
-                          Container(
-                            height: 16.h,
-                            decoration: BoxDecoration(
-                              color: AppColor.yellow4,
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                              ).r,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 12.h,
-                          ),
-                          Container(
-                            height: 16.h,
-                            decoration: BoxDecoration(
-                              color: AppColor.green,
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                              ).r,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 12.h,
-                          ),
-                          Container(
-                            height: 16.h,
-                            decoration: BoxDecoration(
-                              color: AppColor.blue,
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                              ).r,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 32.h,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "최근에 달성한 미션 10개",
-                        style: FontStyle.captionTextStyle,
-                      ),
-                      SizedBox(
-                        width: 4.w,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const InformationDialog(
-                                  title: "최근에 달성한 미션 10개란?",
-                                  content:
-                                      '완료한 모든 미션 중 가장 최근에 달성한 미션 10개까지 볼 수 있습니다.',
-                                );
-                              });
-                        },
-                        child: SvgPicture.asset(
-                          'assets/icons/ic_help_center.svg',
-                          width: 16.w,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8.h,
                   ),
                   const MissionsContainer(),
                 ],

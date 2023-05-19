@@ -1,12 +1,14 @@
 import 'dart:ui';
 
 import 'package:dagather_frontend/components/navigation_bar.dart';
+import 'package:dagather_frontend/provider/user_provider.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 import '../../utilities/fonts.dart';
 
@@ -30,6 +32,8 @@ class LoginScreen extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext context, AsyncSnapshot<User?> user) {
           if (user.hasData) {
+            context.read<UserProvider>().setUserId(user.data!.uid);
+
             return const BaseScaffold();
           } else {
             return Scaffold(

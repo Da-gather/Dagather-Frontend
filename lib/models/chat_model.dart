@@ -13,8 +13,8 @@ class ChatModel {
         lastSender = json["last_sender"],
         lastTime = json["last_time"],
         msgNotRead = json["msg_not_read"],
-        user1 = UserModel.fromJson(json["user_1"]),
-        user2 = UserModel.fromJson(json["user_2"]);
+        user1 = UserModel.fromJsonForFireStore(json["user_1"]),
+        user2 = UserModel.fromJsonForFireStore(json["user_2"]);
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
@@ -22,8 +22,8 @@ class ChatModel {
     data['last_sender'] = lastSender;
     data['last_time'] = lastTime;
     data['msg_not_read'] = msgNotRead;
-    data['user_1'] = user1.toJson();
-    data['user_2'] = user2.toJson();
+    data['user_1'] = user1.toJsonForFireStore();
+    data['user_2'] = user2.toJsonForFireStore();
     return data;
   }
 }

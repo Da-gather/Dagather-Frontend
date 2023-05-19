@@ -110,6 +110,7 @@ class ChatScreen extends StatelessWidget {
                             final Message messageWidget = Message(
                               content: message.content,
                               created: message.created,
+                              type: message.type,
                               isMine: message.sender ==
                                   FirebaseAuth.instance.currentUser!.uid,
                             );

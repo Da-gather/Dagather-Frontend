@@ -1,5 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dagather_frontend/screens/chat/screens/image_viewer_screen.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
+import 'package:dagather_frontend/utilities/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -10,12 +13,14 @@ class Message extends StatelessWidget {
   final String content;
   final Timestamp created;
   final bool isMine;
+  final String type;
 
   const Message({
     super.key,
     required this.content,
     required this.created,
     required this.isMine,
+    required this.type,
   });
 
   String _formatTimeStamp(Timestamp timestamp) {
@@ -49,16 +54,24 @@ class Message extends StatelessWidget {
               bottomLeft: Radius.circular(20),
             ).r,
           ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: 12.h,
-              horizontal: 20.w,
-            ),
-            child: Text(
-              content,
-              style: FontStyle.messageTextStyle,
-            ),
-          ),
+          child: type == MessageType.text.name
+              ? Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12.h,
+                    horizontal: 20.w,
+                  ),
+                  child: Text(
+                    content,
+                    style: FontStyle.messageTextStyle,
+                  ),
+                )
+              : Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12.h,
+                    horizontal: 12.w,
+                  ),
+                  child: ImageContent(content: content),
+                ),
         ),
       ],
     );
@@ -79,16 +92,24 @@ class Message extends StatelessWidget {
               bottomRight: Radius.circular(20),
             ).r,
           ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: 12.h,
-              horizontal: 20.w,
-            ),
-            child: Text(
-              content,
-              style: FontStyle.messageTextStyle,
-            ),
-          ),
+          child: type == MessageType.text.name
+              ? Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12.h,
+                    horizontal: 20.w,
+                  ),
+                  child: Text(
+                    content,
+                    style: FontStyle.messageTextStyle,
+                  ),
+                )
+              : Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12.h,
+                    horizontal: 12.w,
+                  ),
+                  child: ImageContent(content: content),
+                ),
         ),
         Container(
           margin: EdgeInsets.only(left: 6.w),
@@ -104,5 +125,41 @@ class Message extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return isMine ? myMessage(context) : otherMessage(context);
+  }
+}
+
+class ImageContent extends StatelessWidget {
+  const ImageContent({
+    super.key,
+    required this.content,
+  });
+
+  final String content;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ImageViewerScreen(
+            url: content,
+          ),
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10.r),
+        child: CachedNetworkImage(
+          width: 160.w,
+          height: 160.w,
+          fit: BoxFit.cover,
+          imageUrl: content,
+          placeholder: (context, url) => Container(
+            color: AppColor.g200,
+          ),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        ),
+      ),
+    );
   }
 }

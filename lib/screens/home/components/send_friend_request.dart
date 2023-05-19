@@ -6,12 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SendFriendRequest extends StatelessWidget {
+  final String imageUrl;
+  final String name;
+  final void Function() imgOnTapped;
+
   const SendFriendRequest({
     super.key,
     required this.imageUrl,
+    required this.name,
+    required this.imgOnTapped,
   });
-
-  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -22,24 +26,28 @@ class SendFriendRequest extends StatelessWidget {
         children: [
           Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10.r),
-                child: CachedNetworkImage(
-                  width: 44.w,
-                  height: 44.w,
-                  fit: BoxFit.cover,
-                  imageUrl: imageUrl,
-                  placeholder: (context, url) => Container(
-                    color: AppColor.g200,
+              GestureDetector(
+                onTap: imgOnTapped,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.r),
+                  child: CachedNetworkImage(
+                    width: 44.w,
+                    height: 44.w,
+                    fit: BoxFit.cover,
+                    imageUrl: imageUrl,
+                    placeholder: (context, url) => Container(
+                      color: AppColor.g200,
+                    ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
               SizedBox(
                 width: 12.w,
               ),
               Text(
-                "홍길동",
+                name,
                 style: FontStyle.friendRequestTextStyle,
               ),
             ],

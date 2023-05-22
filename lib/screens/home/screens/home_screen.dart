@@ -101,24 +101,23 @@ class HomeScreen extends StatelessWidget {
                                 itemBuilder: ((context, index) {
                                   final user = snapshot.data![index];
 
-                                  developer.log(user.name);
-
                                   return GestureDetector(
                                     onTap: () => Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ProfileScreen(
-                                          uid: user.uid,
+                                          uid: user.uid!,
                                         ),
                                       ),
                                     ),
                                     child: UserWidget(
-                                      name: user.name,
+                                      name: user.name!,
                                       age: getAgeFromDateTime(user.birth!)
                                           .toString(),
-                                      imageUrl: user.imgUrl,
+                                      imageUrl: user.imgUrl!,
                                       purposeTags: user.purposeTags!,
                                       interestTags: user.interestTags!,
+                                      region: user.region!,
                                     ),
                                   );
                                 }),

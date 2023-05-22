@@ -10,11 +10,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ChatAppBar extends StatelessWidget with PreferredSizeWidget {
   final String name;
   final String imgUrl;
+  final String chatRoomId;
+  final String friendId;
 
   const ChatAppBar({
     super.key,
     required this.name,
     required this.imgUrl,
+    required this.chatRoomId,
+    required this.friendId,
   });
 
   @override
@@ -85,7 +89,10 @@ class ChatAppBar extends StatelessWidget with PreferredSizeWidget {
               onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MissionScreen(),
+                    builder: (context) => MissionScreen(
+                      chatroomId: chatRoomId,
+                      friendId: friendId,
+                    ),
                   )),
               style: TextButton.styleFrom(
                 backgroundColor: AppColor.blueLight,

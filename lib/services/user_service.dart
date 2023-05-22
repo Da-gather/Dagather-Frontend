@@ -51,6 +51,39 @@ class UserService {
       final userModel = UserModel.fromJson(body["data"]);
       return userModel;
     }
+
+    throw Error();
+  }
+
+  static Future<bool> hasDoneTutorial(profileId) async {
+    final url =
+        Uri.parse('http://${API.baseUrl}${API.version}/$profile/$profileId');
+
+    Map<String, String> headers = {
+      'Authorization': FirebaseAuth.instance.currentUser!.uid,
+    };
+
+    final response = await http.get(url, headers: headers);
+    if (response.statusCode == 200) {
+      return true;
+    } else if (response.statusCode == 400) {
+      return false;
+    }
+    throw Error();
+  }
+
+  static Future<void> putUser(UserModel user) async {
+    final url = Uri.parse('http://${API.baseUrl}${API.version}/$profile');
+
+    final request = http.MultipartRequest("PUT", url)
+      ..fields.addAll(user.toJson())
+      ..files.add(await http.MultipartFile.fromPath('image', user.imgUrl!));
+
+    final streamedResponse = await request.send();
+    if (streamedResponse.statusCode == 200) {
+      final result = await http.Response.fromStream(streamedResponse);
+      return;
+    }
     throw Error();
   }
 }

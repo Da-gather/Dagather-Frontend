@@ -1,17 +1,23 @@
 import 'package:dagather_frontend/utilities/variables.dart';
 
 class TagModel {
-  final String type;
+  final TagType type;
   final String text;
-  final bool changeColor;
+  bool isSelected;
+
+  TagModel(this.text, this.isSelected, this.type);
 
   TagModel.fromJsonPurpose(Map<String, dynamic> json)
-      : type = TagType.purpose.name,
+      : type = TagType.purpose,
         text = json["purpose"],
-        changeColor = json["same"];
+        isSelected = json["same"];
 
   TagModel.fromJsonInterest(Map<String, dynamic> json)
-      : type = TagType.interest.name,
+      : type = TagType.interest,
         text = json["interest"],
-        changeColor = json["same"];
+        isSelected = json["same"];
+
+  void changeSelectedState(newState) {
+    isSelected = newState;
+  }
 }

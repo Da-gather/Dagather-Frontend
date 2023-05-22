@@ -9,12 +9,16 @@ class ReceiveFriendRequest extends StatelessWidget {
   final String name;
   final String imageUrl;
   final void Function() imgOnTapped;
+  final void Function() refuseButtonOnTapped;
+  final void Function() approveButtonOnTapped;
 
   const ReceiveFriendRequest({
     super.key,
     required this.imageUrl,
     required this.name,
     required this.imgOnTapped,
+    required this.refuseButtonOnTapped,
+    required this.approveButtonOnTapped,
   });
 
   @override
@@ -57,7 +61,7 @@ class ReceiveFriendRequest extends StatelessWidget {
               BaseSmallButton(
                 textColor: AppColor.g100,
                 backgroundColor: AppColor.g300,
-                onPressed: () {},
+                onPressed: refuseButtonOnTapped,
                 text: "거절",
               ),
               SizedBox(
@@ -66,7 +70,7 @@ class ReceiveFriendRequest extends StatelessWidget {
               BaseSmallButton(
                 textColor: AppColor.greenLight,
                 backgroundColor: AppColor.green,
-                onPressed: () {},
+                onPressed: approveButtonOnTapped,
                 text: "수락",
               ),
             ],

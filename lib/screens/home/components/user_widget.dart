@@ -5,6 +5,7 @@ import 'package:dagather_frontend/models/tag_model.dart';
 import 'package:dagather_frontend/screens/home/components/user_widget_tag.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
+import 'package:dagather_frontend/utilities/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -12,6 +13,7 @@ class UserWidget extends StatelessWidget {
   final String name;
   final String imageUrl;
   final String age;
+  final String region;
   final List<TagModel> purposeTags;
   final List<TagModel> interestTags;
   final List<TagModel> tags;
@@ -22,7 +24,8 @@ class UserWidget extends StatelessWidget {
       required this.name,
       required this.age,
       required this.purposeTags,
-      required this.interestTags})
+      required this.interestTags,
+      required this.region})
       : tags = List.from(purposeTags)..addAll(interestTags);
 
   @override
@@ -65,7 +68,7 @@ class UserWidget extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        "🇨🇳",
+                        getRegionEmoji(region),
                         style: TextStyle(
                           fontFamily: pretendardFont,
                           fontSize: 12.sp,
@@ -120,7 +123,7 @@ class UserWidget extends StatelessWidget {
                           (index) => UserWidgetTag(
                                 type: tags[index].type,
                                 text: tags[index].text,
-                                changeColor: tags[index].changeColor,
+                                changeColor: tags[index].isSelected,
                               )),
                     ),
                   ),

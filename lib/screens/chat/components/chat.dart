@@ -9,20 +9,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../screens/chat_screen.dart';
-import 'dart:developer' as developer;
 
 class Chat extends StatelessWidget {
   final String id;
+  final String uid;
   final String name;
   final String imageUrl;
-  final String lastMessage;
-  final String lastSender;
-  final Timestamp lastTime;
+  final String? lastMessage;
+  final String? lastSender;
+  final Timestamp? lastTime;
   final int notReadCount;
 
   const Chat({
     super.key,
     required this.id,
+    required this.uid,
     required this.name,
     required this.imageUrl,
     required this.lastMessage,
@@ -41,11 +42,19 @@ class Chat extends StatelessWidget {
   }
 
   Widget _getReadWidget() {
-    developer.log(lastSender);
-    developer.log(FirebaseAuth.instance.currentUser!.uid);
-    developer
-        .log((lastSender == FirebaseAuth.instance.currentUser!.uid).toString());
-
+    if (lastSender == null) {
+      return Text(
+        "new",
+        style: TextStyle(
+          fontFamily: pretendardFont,
+          fontSize: 10.sp,
+          fontVariations: const [
+            FontVariation('wght', 700),
+          ],
+          color: AppColor.blue,
+        ),
+      );
+    }
     if (lastSender == FirebaseAuth.instance.currentUser!.uid) {
       return Text(
         "전송",
@@ -87,6 +96,7 @@ class Chat extends StatelessWidget {
                     id,
                     name: name,
                     imgUrl: imageUrl,
+                    uid: uid,
                   ))),
       child: Container(
         decoration: BoxDecoration(
@@ -152,7 +162,7 @@ class Chat extends StatelessWidget {
                               height: 4.h,
                             ),
                             Text(
-                              lastMessage,
+                              lastMessage ?? '아직 대화가 없습니다',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -167,7 +177,7 @@ class Chat extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          _formatTimeStamp(lastTime),
+                          lastTime == null ? '' : _formatTimeStamp(lastTime!),
                           style: TextStyle(
                             fontFamily: pretendardFont,
                             fontSize: 12.sp,

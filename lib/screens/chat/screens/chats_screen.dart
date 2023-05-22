@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dagather_frontend/components/app_bar.dart';
 import 'package:dagather_frontend/models/chat_model.dart';
 import 'package:dagather_frontend/models/user_model.dart';
+import 'package:dagather_frontend/utilities/styles.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -52,6 +53,18 @@ class ChatsScreen extends StatelessWidget {
                   if (!snapshot.hasData) {
                     return const Text("no data");
                   } else {
+                    if (snapshot.data!.size == 0) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(vertical: 32.h),
+                        child: Center(
+                          child: Text(
+                            "아직 개설된 채팅방이 없습니다.\n친구를 만들고 채팅을 시작하세요.",
+                            textAlign: TextAlign.center,
+                            style: FontStyle.emptyNotificationTextStyle,
+                          ),
+                        ),
+                      );
+                    }
                     return ListView.separated(
                       physics: const ClampingScrollPhysics(),
                       shrinkWrap: true,
@@ -61,8 +74,9 @@ class ChatsScreen extends StatelessWidget {
                             snapshot.data!.docs[index].data();
                         return Chat(
                           id: snapshot.data!.docs[index].id,
-                          name: _getUser(chat).name,
-                          imageUrl: _getUser(chat).imgUrl,
+                          name: _getUser(chat).name!,
+                          imageUrl: _getUser(chat).imgUrl!,
+                          uid: _getUser(chat).uid!,
                           lastMessage: chat.lastMessage,
                           lastSender: chat.lastSender,
                           lastTime: chat.lastTime,

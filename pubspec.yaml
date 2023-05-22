@@ -52,6 +52,8 @@ dependencies:
   url_launcher: ^6.1.11
   uuid: ^3.0.7
   http: ^0.13.6
+  remedi_kopo: ^0.0.2
+  geocoding: ^2.1.0
 
 dev_dependencies:
   flutter_test:

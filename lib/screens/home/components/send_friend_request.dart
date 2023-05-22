@@ -9,12 +9,14 @@ class SendFriendRequest extends StatelessWidget {
   final String imageUrl;
   final String name;
   final void Function() imgOnTapped;
+  final void Function() cancelBtnOnTapped;
 
   const SendFriendRequest({
     super.key,
     required this.imageUrl,
     required this.name,
     required this.imgOnTapped,
+    required this.cancelBtnOnTapped,
   });
 
   @override
@@ -55,7 +57,7 @@ class SendFriendRequest extends StatelessWidget {
           BaseSmallButton(
             textColor: AppColor.g500,
             backgroundColor: AppColor.g200,
-            onPressed: () {},
+            onPressed: cancelBtnOnTapped,
             text: "신청 취소",
           ),
         ],

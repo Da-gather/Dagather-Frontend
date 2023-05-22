@@ -15,6 +15,43 @@ class FontStyle {
     color: AppColor.g400,
   );
 
+  static var stepTextStyle = TextStyle(
+    fontFamily: pretendardFont,
+    fontSize: 13.sp,
+    fontVariations: const [
+      FontVariation('wght', 700),
+    ],
+    color: AppColor.g500,
+  );
+
+  static var titleTextStyle = TextStyle(
+    fontFamily: pretendardFont,
+    fontSize: 24.sp,
+    height: 1.45,
+    fontVariations: const [
+      FontVariation('wght', 700),
+    ],
+    color: AppColor.g800,
+  );
+
+  static var inputTextStyle = TextStyle(
+    fontFamily: pretendardFont,
+    fontSize: 15.sp,
+    fontVariations: const [
+      FontVariation('wght', 600),
+    ],
+    color: AppColor.g700,
+  );
+
+  static var hintTextStyle = TextStyle(
+    fontFamily: pretendardFont,
+    fontSize: 15.sp,
+    fontVariations: const [
+      FontVariation('wght', 600),
+    ],
+    color: AppColor.g400,
+  );
+
   static var timeTextStyle = TextStyle(
     fontFamily: pretendardFont,
     fontSize: 12.sp,

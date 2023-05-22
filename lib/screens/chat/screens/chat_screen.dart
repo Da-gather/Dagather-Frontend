@@ -17,6 +17,7 @@ class ChatScreen extends StatelessWidget {
   final String docId;
   final String name;
   final String imgUrl;
+  final String uid;
   late final Query<MessageModel> _messagesRef;
   final ScrollController _scrollController = ScrollController();
 
@@ -25,6 +26,7 @@ class ChatScreen extends StatelessWidget {
     super.key,
     required this.name,
     required this.imgUrl,
+    required this.uid,
   })  : docId = id,
         _messagesRef = FirebaseFirestore.instance
             .collection('chats')
@@ -66,6 +68,8 @@ class ChatScreen extends StatelessWidget {
       appBar: ChatAppBar(
         imgUrl: imgUrl,
         name: name,
+        chatRoomId: docId,
+        friendId: uid,
       ),
       body: Column(
         children: [

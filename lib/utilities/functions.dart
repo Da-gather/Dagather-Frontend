@@ -19,8 +19,36 @@ int getAgeFromDateTime(DateTime datetime) {
 
 String getGender(isWomen) {
   if (isWomen) {
-    return GenderType.women;
+    return "여자";
   } else {
-    return GenderType.men;
+    return "남자";
   }
+}
+
+bool getGenderBool(GenderType type) {
+  if (GenderType.woman == type) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+String getRegionText(String region) {
+  final country = countries.firstWhere(
+    (element) => element['code'] == region,
+    orElse: () {
+      throw Error();
+    },
+  );
+  return "${country['emoji']} ${country['name']}";
+}
+
+String getRegionEmoji(String region) {
+  final country = countries.firstWhere(
+    (element) => element['code'] == region,
+    orElse: () {
+      throw Error();
+    },
+  );
+  return country['emoji']!;
 }

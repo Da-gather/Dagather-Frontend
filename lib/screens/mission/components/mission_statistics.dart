@@ -23,9 +23,17 @@ class MissionStatistics extends StatelessWidget {
       required this.greenCount,
       required this.blueCount});
 
+  int _getLargest() {
+    int largest = redCount;
+    if (yellowCount > largest) largest = yellowCount;
+    if (greenCount > largest) largest = greenCount;
+    if (blueCount > largest) largest = blueCount;
+    return largest;
+  }
+
   @override
   Widget build(BuildContext context) {
-    int largestNumber = 0;
+    final maxCount = _getLargest();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -125,7 +133,7 @@ class MissionStatistics extends StatelessWidget {
                 StatisticBar(
                   color: AppColor.red,
                   count: redCount,
-                  totalCount: totalCount,
+                  maxCount: maxCount,
                 ),
                 SizedBox(
                   height: 12.h,
@@ -133,7 +141,7 @@ class MissionStatistics extends StatelessWidget {
                 StatisticBar(
                   color: AppColor.yellow4,
                   count: yellowCount,
-                  totalCount: totalCount,
+                  maxCount: maxCount,
                 ),
                 SizedBox(
                   height: 12.h,
@@ -141,7 +149,7 @@ class MissionStatistics extends StatelessWidget {
                 StatisticBar(
                   color: AppColor.green,
                   count: greenCount,
-                  totalCount: totalCount,
+                  maxCount: maxCount,
                 ),
                 SizedBox(
                   height: 12.h,
@@ -149,7 +157,7 @@ class MissionStatistics extends StatelessWidget {
                 StatisticBar(
                   color: AppColor.blue,
                   count: blueCount,
-                  totalCount: totalCount,
+                  maxCount: maxCount,
                 ),
               ],
             ),
@@ -162,7 +170,7 @@ class MissionStatistics extends StatelessWidget {
 
 class StatisticBar extends StatelessWidget {
   final int count;
-  final int totalCount;
+  final int maxCount;
   final Color color;
   final num width = 300;
 
@@ -170,7 +178,7 @@ class StatisticBar extends StatelessWidget {
     super.key,
     required this.color,
     required this.count,
-    required this.totalCount,
+    required this.maxCount,
   });
 
   @override
@@ -189,10 +197,10 @@ class StatisticBar extends StatelessWidget {
             ).r,
           ),
         ),
-        if (count != 0 && totalCount != 0)
+        if (count != 0 && maxCount != 0)
           Container(
             height: 16.h,
-            width: (count / totalCount) * width.w,
+            width: (count / maxCount) * width.w,
             decoration: BoxDecoration(
               color: color,
               borderRadius: const BorderRadius.only(

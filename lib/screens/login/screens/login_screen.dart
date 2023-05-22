@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:dagather_frontend/components/navigation_bar.dart';
 import 'package:dagather_frontend/provider/user_provider.dart';
+import 'package:dagather_frontend/screens/login/screens/tutorial_step_1_screen.dart';
+import 'package:dagather_frontend/services/user_service.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +12,18 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
-import '../../utilities/fonts.dart';
+import '../../../utilities/fonts.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool isLoading = false;
+  Future<bool>? hasdone;
 
   Future<UserCredential> _signInWithGoogle() async {
     final GoogleSignInAccount? user = await GoogleSignIn().signIn();
@@ -31,11 +41,7 @@ class LoginScreen extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext context, AsyncSnapshot<User?> user) {
-          if (user.hasData) {
-            context.read<UserProvider>().setUserId(user.data!.uid);
-
-            return const BaseScaffold();
-          } else {
+          if (!user.hasData) {
             return Scaffold(
               body: Stack(
                 children: [
@@ -120,6 +126,38 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ],
               ),
+            );
+          } else {
+            context.read<UserProvider>().setUserId(user.data!.uid);
+            hasdone = UserService.hasDoneTutorial(user.data!.uid);
+            //hasdone = UserService.hasDoneTutorial('12343');
+            return FutureBuilder(
+              future: hasdone,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case ConnectionState.none:
+                    return const Center(
+                      child: Text("none"),
+                    );
+                  case ConnectionState.active:
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      throw Error();
+                    }
+                    if (snapshot.hasData) {
+                      if (snapshot.data!) {
+                        return const BaseScaffold();
+                      } else {
+                        return const TutorialStep1Screen();
+                      }
+                    }
+                }
+                throw Error();
+              },
             );
           }
         },

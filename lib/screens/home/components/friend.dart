@@ -9,12 +9,14 @@ class Friend extends StatelessWidget {
   final String imageUrl;
   final String name;
   final void Function() imgOnTapped;
+  final void Function() cancelBtnOnTapped;
 
   const Friend({
     super.key,
     required this.imageUrl,
     required this.name,
     required this.imgOnTapped,
+    required this.cancelBtnOnTapped,
   });
 
   @override
@@ -55,7 +57,7 @@ class Friend extends StatelessWidget {
           BaseSmallButton(
             textColor: AppColor.g100,
             backgroundColor: AppColor.red,
-            onPressed: () {},
+            onPressed: cancelBtnOnTapped,
             text: "친구 삭제",
           ),
         ],

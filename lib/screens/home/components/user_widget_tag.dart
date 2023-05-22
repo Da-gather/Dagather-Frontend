@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class UserWidgetTag extends StatelessWidget {
   final String text;
   final bool changeColor;
-  final String type;
+  final TagType type;
 
   const UserWidgetTag({
     super.key,
@@ -22,9 +22,8 @@ class UserWidgetTag extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: type == TagType.purpose.name
-            ? AppColor.greenLight
-            : AppColor.blueLight,
+        color:
+            type == TagType.purpose ? AppColor.greenLight : AppColor.blueLight,
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Padding(
@@ -38,8 +37,7 @@ class UserWidgetTag extends StatelessWidget {
             fontVariations: const [
               FontVariation('wght', 700),
             ],
-            color:
-                type == TagType.purpose.name ? AppColor.green : AppColor.blue,
+            color: type == TagType.purpose ? AppColor.green : AppColor.blue,
           ),
         ),
       ),

@@ -6,10 +6,24 @@ import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class MissionDialog extends StatelessWidget {
+  final num id;
+  final String imgUrl;
+  final String date;
+  final String content;
+  final Color color;
+  final Color subColor;
+
   const MissionDialog({
     super.key,
+    required this.id,
+    required this.imgUrl,
+    required this.date,
+    required this.content,
+    required this.color,
+    required this.subColor,
   });
 
   @override
@@ -36,8 +50,7 @@ class MissionDialog extends StatelessWidget {
                           width: 24.w,
                           height: 24.w,
                           fit: BoxFit.cover,
-                          imageUrl:
-                              "https://images.unsplash.com/photo-1605434700731-331ca2458a77?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1365&q=80",
+                          imageUrl: imgUrl,
                           placeholder: (context, url) => Container(
                             color: AppColor.g200,
                           ),
@@ -68,14 +81,15 @@ class MissionDialog extends StatelessWidget {
                       text: TextSpan(
                     children: [
                       TextSpan(
-                        text: '2023년 11월 23',
+                        text: DateFormat('yyyy.MM.dd')
+                            .format(DateTime.parse(date)),
                         style: TextStyle(
                           fontFamily: pretendardFont,
                           fontSize: 14.sp,
                           fontVariations: const [
                             FontVariation('wght', 700),
                           ],
-                          color: AppColor.blue,
+                          color: color,
                         ),
                       ),
                       TextSpan(
@@ -98,9 +112,9 @@ class MissionDialog extends StatelessWidget {
                 height: 40.w,
                 child: Blob.fromID(
                   size: 40.w,
-                  id: const ["7-4-1234"],
+                  id: ["7-4-$id"],
                   styles: BlobStyles(
-                    color: AppColor.blue,
+                    color: color,
                     fillType: BlobFillType.fill,
                   ),
                 ),
@@ -112,20 +126,20 @@ class MissionDialog extends StatelessWidget {
           ),
           Container(
             decoration: BoxDecoration(
-                color: AppColor.blueLight,
-                borderRadius: BorderRadius.circular(10).r),
+                color: subColor, borderRadius: BorderRadius.circular(10).r),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14).h,
+              padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 10.w),
               child: Center(
                 child: Text(
-                  "함께 동네 맛집가서 맛있는 밥 먹기",
+                  content,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: pretendardFont,
-                    fontSize: 13.sp,
+                    fontSize: 14.sp,
                     fontVariations: const [
-                      FontVariation('wght', 600),
+                      FontVariation('wght', 700),
                     ],
-                    color: AppColor.blue,
+                    color: color,
                   ),
                 ),
               ),

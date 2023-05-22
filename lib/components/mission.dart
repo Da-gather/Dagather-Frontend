@@ -1,21 +1,29 @@
 import 'dart:ui';
 
-import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:blobs/blobs.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Mission extends StatelessWidget {
+  final num id;
+  final String content;
+  final Color color;
+  final Color subColor;
+
   const Mission({
     super.key,
+    required this.content,
+    required this.color,
+    required this.subColor,
+    required this.id,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColor.yellow1,
+        color: subColor,
         borderRadius: BorderRadius.circular(10.r),
       ),
       child: Padding(
@@ -24,9 +32,9 @@ class Mission extends StatelessWidget {
           children: [
             Blob.fromID(
               size: 28.w,
-              id: const ["7-4-1233"],
+              id: ["7-4-$id"],
               styles: BlobStyles(
-                color: AppColor.yellow4,
+                color: color,
                 fillType: BlobFillType.fill,
               ),
             ),
@@ -34,14 +42,14 @@ class Mission extends StatelessWidget {
               width: 8.w,
             ),
             Text(
-              "동네 맛집 공유하기",
+              content,
               style: TextStyle(
                 fontFamily: pretendardFont,
                 fontSize: 14.sp,
                 fontVariations: const [
                   FontVariation('wght', 800),
                 ],
-                color: AppColor.yellow4,
+                color: color,
               ),
             ),
           ],

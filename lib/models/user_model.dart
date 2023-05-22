@@ -1,18 +1,23 @@
 import 'package:dagather_frontend/models/tag_model.dart';
+import 'package:intl/intl.dart';
 
 class UserModel {
-  final String uid;
-  final String name;
-  final String imgUrl;
+  String? uid;
+  String? name;
+  String? imgUrl;
   String? friendState;
   DateTime? birth;
   bool? gender;
-  String? period;
+  int? period;
   String? address;
+  double? latitude;
+  double? longitude;
   String? region;
   String? introduction;
   List<TagModel>? purposeTags;
   List<TagModel>? interestTags;
+
+  UserModel();
 
   UserModel.fromJson(Map<String, dynamic> json)
       : uid = json["memberId"],
@@ -38,11 +43,6 @@ class UserModel {
     interestTags = interestTagsInstance;
   }
 
-  UserModel.fromJsonForFriend(Map<String, dynamic> json)
-      : uid = json["memberId"],
-        name = json["name"],
-        imgUrl = json["imageUrl"];
-
   UserModel.fromJsonForFireStore(Map<String, dynamic> json)
       : uid = json["uid"],
         name = json["name"],
@@ -53,6 +53,31 @@ class UserModel {
     data['uid'] = uid;
     data['name'] = name;
     data['img_url'] = imgUrl;
+    return data;
+  }
+
+  Map<String, String> toJson() {
+    final Map<String, String> data = {};
+    data['memberId'] = uid!;
+    data['resident'] = address!;
+    data['name'] = name!;
+    data['gender'] = gender.toString();
+    data['birth'] = DateFormat('yyyy-MM-dd').format(birth!);
+    data['nationality'] = region!;
+    data['rperiod'] = period.toString();
+    data['introduction'] = introduction!;
+    data['purposes'] = purposeTags!
+        .map((element) => element.text)
+        .toList()
+        .toString()
+        .replaceAll(RegExp('[][]'), "");
+    data['interests'] = interestTags!
+        .map((element) => element.text)
+        .toList()
+        .toString()
+        .replaceAll(RegExp('[][]'), "");
+    data['longitude'] = longitude.toString();
+    data['latitude'] = latitude.toString();
     return data;
   }
 }

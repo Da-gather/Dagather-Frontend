@@ -6,32 +6,35 @@ import 'package:dagather_frontend/utilities/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class Tag extends StatelessWidget {
-  final String type;
+class BaseTag extends StatelessWidget {
+  final TagType type;
   final String text;
   final bool changeColor;
 
-  const Tag(
+  const BaseTag(
       {super.key,
       required this.text,
       required this.changeColor,
       required this.type});
 
   Color _getBackgroundColor() {
-    if ((type == TagType.purpose.name) && (changeColor)) {
+    if ((type == TagType.purpose) && (changeColor)) {
       return AppColor.green;
     }
-    if ((type == TagType.interest.name) && (changeColor)) {
+    if ((type == TagType.interest) && (changeColor)) {
       return AppColor.blue;
+    }
+    if ((type == TagType.purpose) && (changeColor)) {
+      return AppColor.green;
     }
     return AppColor.g200;
   }
 
   Color _getTextColor() {
-    if ((type == TagType.purpose.name) && (changeColor)) {
+    if ((type == TagType.purpose) && (changeColor)) {
       return AppColor.greenLight;
     }
-    if ((type == TagType.interest.name) && (changeColor)) {
+    if ((type == TagType.interest) && (changeColor)) {
       return AppColor.blueLight;
     }
     return AppColor.g600;

@@ -1,5 +1,5 @@
 import 'package:dagather_frontend/provider/user_provider.dart';
-import 'package:dagather_frontend/screens/login/login_screen.dart';
+import 'package:dagather_frontend/screens/login/screens/login_screen.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:flutter/material.dart';

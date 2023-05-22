@@ -1,6 +1,7 @@
 import 'package:blobs/blobs.dart';
 import 'package:dagather_frontend/components/information_dialog.dart';
 import 'package:dagather_frontend/components/mission_dialog.dart';
+import 'package:dagather_frontend/models/mission_model.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +9,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class MissionsContainer extends StatelessWidget {
+  final List<MissionModel> list;
   final bool hasTitle;
 
   const MissionsContainer({
     super.key,
     this.hasTitle = true,
+    required this.list,
   });
 
   @override
@@ -30,7 +33,7 @@ class MissionsContainer extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return const InformationDialog(
-                          title: "최근에 달성한 미션 10개란?",
+                          title: "최근에 달성한 미션이란?",
                           content: '완료한 모든 미션 중 가장 최근에 달성한 미션 10개까지 볼 수 있습니다.',
                         );
                       });
@@ -38,7 +41,7 @@ class MissionsContainer extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      "최근에 달성한 미션 10개",
+                      "최근에 달성한 미션",
                       style: FontStyle.captionTextStyle,
                     ),
                     SizedBox(
@@ -73,73 +76,32 @@ class MissionsContainer extends StatelessWidget {
               crossAxisSpacing: 8.h,
               mainAxisSpacing: 16.h,
             ),
-            children: [
-              GestureDetector(
+            children: List.generate(list.length, (index) {
+              return GestureDetector(
                 onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return const MissionDialog();
+                        return MissionDialog(
+                          content: list[index].mission,
+                          date: list[index].completedAt!,
+                          id: list[index].id,
+                          imgUrl: list[index].friendImgUrl,
+                          color: list[index].color,
+                          subColor: list[index].subColor,
+                        );
                       });
                 },
                 child: Blob.fromID(
                   size: 64.w,
-                  id: const ["7-4-1234"],
+                  id: ["7-4-${list[index].id}"],
                   styles: BlobStyles(
-                    color: AppColor.green,
+                    color: list[index].color,
                     fillType: BlobFillType.fill,
                   ),
                 ),
-              ),
-              Blob.fromID(
-                size: 64.w,
-                id: const ["7-4-1235"],
-                styles: BlobStyles(
-                  color: AppColor.red,
-                  fillType: BlobFillType.fill,
-                ),
-              ),
-              Blob.fromID(
-                size: 64.w,
-                id: const ["7-4-1236"],
-                styles: BlobStyles(
-                  color: AppColor.yellow4,
-                  fillType: BlobFillType.fill,
-                ),
-              ),
-              Blob.fromID(
-                size: 64.w,
-                id: const ["7-4-1237"],
-                styles: BlobStyles(
-                  color: AppColor.red,
-                  fillType: BlobFillType.fill,
-                ),
-              ),
-              Blob.fromID(
-                size: 64.w,
-                id: const ["7-4-1238"],
-                styles: BlobStyles(
-                  color: AppColor.blue,
-                  fillType: BlobFillType.fill,
-                ),
-              ),
-              Blob.fromID(
-                size: 64.w,
-                id: const ["7-4-1239"],
-                styles: BlobStyles(
-                  color: AppColor.yellow4,
-                  fillType: BlobFillType.fill,
-                ),
-              ),
-              Blob.fromID(
-                size: 64.w,
-                id: const ["7-4-1240"],
-                styles: BlobStyles(
-                  color: AppColor.green,
-                  fillType: BlobFillType.fill,
-                ),
-              ),
-            ],
+              );
+            }),
           ),
         ),
       ],

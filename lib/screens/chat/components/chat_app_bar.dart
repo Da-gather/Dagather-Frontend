@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dagather_frontend/screens/mission/screens/mission_screen.dart';
+import 'package:dagather_frontend/screens/profile/screens/profile_screen.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:flutter/material.dart';
@@ -52,37 +53,47 @@ class ChatAppBar extends StatelessWidget with PreferredSizeWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: Row(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(right: 8.w),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(100.r),
-                      child: CachedNetworkImage(
-                        width: 32.w,
-                        height: 32.w,
-                        fit: BoxFit.cover,
-                        imageUrl: imgUrl,
-                        placeholder: (context, url) => Container(
-                          color: AppColor.g200,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfileScreen(
+                                uid: friendId,
+                              )));
+                },
+                child: Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(right: 8.w),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100.r),
+                        child: CachedNetworkImage(
+                          width: 32.w,
+                          height: 32.w,
+                          fit: BoxFit.cover,
+                          imageUrl: imgUrl,
+                          placeholder: (context, url) => Container(
+                            color: AppColor.g200,
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
                         ),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
                       ),
                     ),
-                  ),
-                  Text(
-                    name,
-                    style: TextStyle(
-                      fontFamily: pretendardFont,
-                      fontSize: 15.sp,
-                      fontVariations: const [
-                        FontVariation('wght', 700),
-                      ],
-                      color: AppColor.g800,
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontFamily: pretendardFont,
+                        fontSize: 15.sp,
+                        fontVariations: const [
+                          FontVariation('wght', 700),
+                        ],
+                        color: AppColor.g800,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             TextButton(

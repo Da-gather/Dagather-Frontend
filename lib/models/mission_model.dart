@@ -15,18 +15,8 @@ class MissionModel {
   String? currentUserId;
   String? currentUserName;
   String? currentUserImgUrl;
-
-  MissionModel({
-    required this.id,
-    required this.friendId,
-    required this.friendImgUrl,
-    required this.mission,
-    required this.category,
-    required this.color,
-    required this.subColor,
-    this.friendName,
-    this.completedAt,
-  });
+  bool hasCurrentUserCompleted = false;
+  bool hasFriendCompleted = false;
 
   MissionModel.fromJson(Map<String, dynamic> json)
       : id = json["id"],
@@ -48,9 +38,11 @@ class MissionModel {
         friendId = json["friendId"],
         friendName = json["friendName"],
         friendImgUrl = json["friendImageUrl"],
+        hasFriendCompleted = json["complete2"] ?? false,
         currentUserId = json["userId"],
         currentUserName = json["userName"],
         currentUserImgUrl = json["userImageUrl"],
+        hasCurrentUserCompleted = json["complete1"] ?? false,
         mission = json["mission"],
         category = json["category"] {
     color =

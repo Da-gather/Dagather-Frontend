@@ -278,7 +278,21 @@ class AccountScreen extends StatelessWidget {
                             if (snapshot.hasError) {
                               throw Error();
                             }
+
                             if (snapshot.hasData) {
+                              if (snapshot.data!.isEmpty) {
+                                return Center(
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 32.h),
+                                    child: Text(
+                                      "진행 중인 미션이 없습니다",
+                                      style:
+                                          FontStyle.emptyNotificationTextStyle,
+                                    ),
+                                  ),
+                                );
+                              }
                               return ListView.separated(
                                   physics: const ClampingScrollPhysics(),
                                   shrinkWrap: true,

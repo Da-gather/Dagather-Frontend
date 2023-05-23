@@ -6,7 +6,6 @@ import 'package:dagather_frontend/models/user_model.dart';
 import 'package:dagather_frontend/screens/login/screens/tutorial_step_3_screen.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
-import 'package:dagather_frontend/utilities/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:remedi_kopo/remedi_kopo.dart';
@@ -24,12 +23,13 @@ class TutorialStep2Screen extends StatefulWidget {
 }
 
 class _TutorialStep2ScreenState extends State<TutorialStep2Screen> {
-  String? _period;
+  final TextEditingController _textController = TextEditingController();
   String _address = "";
+
   List<Location>? locations;
 
   bool _isButtonDisable() {
-    return _period == null || _address.isEmpty;
+    return _textController.text.isEmpty || _address.isEmpty;
   }
 
   Future<void> getLocations() async {
@@ -66,44 +66,38 @@ class _TutorialStep2ScreenState extends State<TutorialStep2Screen> {
                 style: FontStyle.captionTextStyle,
               ),
               SizedBox(height: 8.h),
-              DropdownButtonHideUnderline(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.g100,
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 6.h, horizontal: 20.w),
-                    child: DropdownButton(
-                      hint: Text(
-                        "거주 기간 선택",
-                        style: FontStyle.hintTextStyle,
-                      ),
-                      enableFeedback: true,
-                      value: _period,
-                      elevation: 0,
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      onChanged: (value) => setState(() {}),
+                      controller: _textController,
                       style: FontStyle.inputTextStyle,
-                      icon: Icon(
-                        Icons.arrow_drop_down_rounded,
-                        color: AppColor.g400,
-                        size: 24.w,
+                      maxLines: 1,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.end,
+                      decoration: InputDecoration(
+                        hintText: '4년 5개월 살았을 경우 5년 이하',
+                        hintStyle: FontStyle.hintTextStyle,
+                        filled: true,
+                        fillColor: AppColor.g100,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 20.w, vertical: 20.h),
                       ),
-                      borderRadius: BorderRadius.circular(10.r),
-                      items: periods.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item["value"],
-                          child: Text('${item["name"]}'),
-                        );
-                      }).toList(),
-                      onChanged: (dynamic value) {
-                        setState(() {
-                          _period = value;
-                        });
-                      },
                     ),
                   ),
-                ),
+                  SizedBox(
+                    width: 12.w,
+                  ),
+                  Text(
+                    "년 이하",
+                    style: FontStyle.inputTextStyle,
+                  ),
+                ],
               ),
               SizedBox(height: 32.h),
               Text(
@@ -196,16 +190,17 @@ class _TutorialStep2ScreenState extends State<TutorialStep2Screen> {
                 isDisable: _isButtonDisable(),
                 onPressed: () {
                   getLocations();
-                  //widget.user.period = _period;
+                  widget.user.period = int.parse(_textController.text);
                   widget.user.address = _address;
 
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => TutorialStep3Screen(
-                              profileImage: widget.profileImage,
-                              user: widget.user,
-                            )),
+                      builder: (context) => TutorialStep3Screen(
+                        profileImage: widget.profileImage,
+                        user: widget.user,
+                      ),
+                    ),
                   );
                 },
               ),

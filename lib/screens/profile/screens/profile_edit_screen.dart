@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dagather_frontend/components/app_bar.dart';
 import 'package:dagather_frontend/components/base_button.dart';
 import 'package:dagather_frontend/components/base_tag.dart';
 import 'package:dagather_frontend/components/navigation_bar.dart';
 import 'package:dagather_frontend/models/tag_model.dart';
 import 'package:dagather_frontend/models/user_model.dart';
+import 'package:dagather_frontend/services/user_service.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
@@ -33,34 +35,86 @@ class ProfileEditScreen extends StatefulWidget {
 
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late UserModel _user;
+
   late TextEditingController _nameTextController;
+  late TextEditingController _periodTextController;
   late TextEditingController _introductionTextController;
+
+  late List<TagModel> _interestList;
+  late List<TagModel> _purposeList;
+
+  late GenderType _gender;
+  bool _isMenSelected = false;
+  bool _isWomenSelected = false;
+
+  late DateTime _date;
+  late String _region;
+  late String _address;
+
+  File? _profileImage;
+  List<Location>? locations;
+
+  final ImagePicker picker = ImagePicker();
+
+  bool _isButtonDisable() {
+    return _nameTextController.text.isEmpty ||
+        _periodTextController.text.isEmpty ||
+        _introductionTextController.text.isEmpty ||
+        _countSelected(_purposeList) == 0 ||
+        _countSelected(_interestList) < 3 ||
+        _countSelected(_interestList) > 10;
+  }
 
   @override
   void initState() {
     super.initState();
     _user = widget.user;
+
+    // 사용자 이름
     _nameTextController = TextEditingController(text: _user.name!);
+
+    // 자기소개
+    _periodTextController =
+        TextEditingController(text: _user.period.toString());
+
+    // 자기소개
     _introductionTextController =
         TextEditingController(text: _user.introduction!);
+
+    // 생년월일
+    _date = _user.birth!;
+
+    // 국적
+    _region = _user.region!;
+
+    // 거주지
+    _address = _user.address!;
+
+    // 관심사
+    _interestList = interests.map((item) {
+      if (_user.interestTags!.map((element) => element.text).contains(item)) {
+        return TagModel(item, true, TagType.interest);
+      }
+      return TagModel(item, false, TagType.interest);
+    }).toList();
+
+    //가입 목적
+    _purposeList = purposes.map((item) {
+      if (_user.purposeTags!.map((element) => element.text).contains(item)) {
+        return TagModel(item, true, TagType.purpose);
+      }
+      return TagModel(item, false, TagType.purpose);
+    }).toList();
+
+    // 성별
+    if (_user.gender!) {
+      _isWomenSelected = true;
+      _gender = GenderType.woman;
+    } else {
+      _isMenSelected = true;
+      _gender = GenderType.man;
+    }
   }
-
-  File? _profileImage;
-  List<Location>? locations;
-  DateTime? _date;
-  GenderType? _gender;
-
-  bool _isMenSelected = false;
-  bool _isWomenSelected = false;
-
-  final interestList = interests.map((item) {
-    return TagModel(item, false, TagType.interest);
-  }).toList();
-  final purposeList = purposes.map((item) {
-    return TagModel(item, false, TagType.purpose);
-  }).toList();
-
-  final ImagePicker picker = ImagePicker();
 
   List<TagModel> _getListWithSelected(List<TagModel> list) {
     return list.where((element) => element.isSelected).toList();
@@ -88,8 +142,25 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     }
   }
 
-  bool _isButtonDisable() {
-    return true;
+  void _setAddress() async {
+    KopoModel? model = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RemediKopo(),
+      ),
+    );
+    if (model != null) {
+      setState(() {
+        if (model.sido != null &&
+            model.sigungu != null &&
+            model.sido!.isNotEmpty &&
+            model.sigungu!.isNotEmpty) {
+          _address = model.jibunAddress!;
+        } else {
+          throw Error();
+        }
+      });
+    }
   }
 
   @override
@@ -198,7 +269,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   HapticFeedback.lightImpact();
                   final selectedDate = await showDatePicker(
                     context: context,
-                    initialDate: _date ?? DateTime.now(),
+                    initialDate: _date,
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
                   );
@@ -220,12 +291,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _date != null
-                              ? DateFormat('yyyy.MM.dd').format(_date!)
-                              : "생년월일 선택",
-                          style: _date != null
-                              ? FontStyle.inputTextStyle
-                              : FontStyle.hintTextStyle,
+                          DateFormat('yyyy.MM.dd').format(_date),
+                          style: FontStyle.inputTextStyle,
                         ),
                         Icon(
                           Icons.calendar_month_rounded,
@@ -258,7 +325,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         style: FontStyle.hintTextStyle,
                       ),
                       enableFeedback: true,
-                      value: widget.user.region,
+                      value: _region,
                       elevation: 0,
                       style: FontStyle.inputTextStyle,
                       icon: Icon(
@@ -275,7 +342,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       }).toList(),
                       onChanged: (dynamic value) {
                         setState(() {
-                          widget.user.region = value;
+                          _region = value;
                         });
                       },
                     ),
@@ -299,28 +366,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   }
                 },
                 child: _profileImage == null
-                    ? Container(
-                        height: 300.h,
-                        decoration: BoxDecoration(
-                          color: AppColor.g100,
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add_photo_alternate_rounded,
-                              color: AppColor.g400,
-                              size: 40.w,
-                            ),
-                            SizedBox(
-                              height: 8.h,
-                            ),
-                            Text(
-                              "눌러서 사진 선택",
-                              style: FontStyle.hintTextStyle,
-                            ),
-                          ],
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(10.r),
+                        child: CachedNetworkImage(
+                          height: 300.h,
+                          fit: BoxFit.cover,
+                          imageUrl: _user.imgUrl!,
+                          placeholder: (context, url) => Container(
+                            color: AppColor.g200,
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
                         ),
                       )
                     : ClipRRect(
@@ -345,6 +401,39 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 style: FontStyle.captionTextStyle,
               ),
               SizedBox(height: 8.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      onChanged: (value) => setState(() {}),
+                      controller: _periodTextController,
+                      style: FontStyle.inputTextStyle,
+                      maxLines: 1,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.end,
+                      decoration: InputDecoration(
+                        hintText: '4년 5개월 살았을 경우 5년 이하',
+                        hintStyle: FontStyle.hintTextStyle,
+                        filled: true,
+                        fillColor: AppColor.g100,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 20.w, vertical: 20.h),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 12.w,
+                  ),
+                  Text(
+                    "년 이하",
+                    style: FontStyle.inputTextStyle,
+                  ),
+                ],
+              ),
               SizedBox(height: 32.h),
               Text(
                 "거주지",
@@ -355,26 +444,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 children: [
                   Expanded(
                     child: GestureDetector(
-                      onTap: () async {
-                        KopoModel? model = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RemediKopo(),
-                          ),
-                        );
-                        if (model != null) {
-                          setState(() {
-                            if (model.sido != null &&
-                                model.sigungu != null &&
-                                model.sido!.isNotEmpty &&
-                                model.sigungu!.isNotEmpty) {
-                              widget.user.address = model.jibunAddress!;
-                            } else {
-                              throw Error();
-                            }
-                          });
-                        }
-                      },
+                      onTap: _setAddress,
                       child: Container(
                         decoration: BoxDecoration(
                           color: AppColor.g100,
@@ -384,12 +454,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                           padding: EdgeInsets.symmetric(
                               horizontal: 20.w, vertical: 20.h),
                           child: Text(
-                            widget.user.address!.isEmpty
-                                ? '주소를 검색하세요'
-                                : widget.user.address!,
-                            style: widget.user.address!.isEmpty
-                                ? FontStyle.hintTextStyle
-                                : FontStyle.inputTextStyle,
+                            _address,
+                            style: FontStyle.inputTextStyle,
                           ),
                         ),
                       ),
@@ -408,26 +474,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         size: 24.w,
                         color: AppColor.g600,
                       ),
-                      onPressed: () async {
-                        KopoModel? model = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RemediKopo(),
-                          ),
-                        );
-                        if (model != null) {
-                          setState(() {
-                            if (model.sido != null &&
-                                model.sigungu != null &&
-                                model.sido!.isNotEmpty &&
-                                model.sigungu!.isNotEmpty) {
-                              widget.user.address = model.jibunAddress!;
-                            } else {
-                              throw Error();
-                            }
-                          });
-                        }
-                      },
+                      onPressed: _setAddress,
                     ),
                   ),
                 ],
@@ -446,18 +493,18 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   spacing: 4.w,
                   runSpacing: 4.h,
                   children: List.generate(
-                      purposeList.length,
+                      _purposeList.length,
                       (index) => GestureDetector(
                             onTap: () {
                               HapticFeedback.lightImpact();
-                              purposeList[index].isSelected =
-                                  !purposeList[index].isSelected;
+                              _purposeList[index].isSelected =
+                                  !_purposeList[index].isSelected;
                               setState(() {});
                             },
                             child: BaseTag(
-                              type: purposeList[index].type,
-                              text: purposeList[index].text,
-                              changeColor: purposeList[index].isSelected,
+                              type: _purposeList[index].type,
+                              text: _purposeList[index].text,
+                              changeColor: _purposeList[index].isSelected,
                             ),
                           )),
                 ),
@@ -476,11 +523,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   spacing: 4.w,
                   runSpacing: 4.h,
                   children: List.generate(
-                      interestList.length,
+                      _interestList.length,
                       (index) => GestureDetector(
                             onTap: () {
-                              if (!interestList[index].isSelected &&
-                                  _countSelected(interestList) >= 10) {
+                              if (!_interestList[index].isSelected &&
+                                  _countSelected(_interestList) >= 10) {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(const SnackBar(
                                   content: Text('최대 10개까지만 선택 가능합니다'),
@@ -491,14 +538,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                 return;
                               }
                               HapticFeedback.lightImpact();
-                              interestList[index].isSelected =
-                                  !interestList[index].isSelected;
+                              _interestList[index].isSelected =
+                                  !_interestList[index].isSelected;
                               setState(() {});
                             },
                             child: BaseTag(
-                              type: interestList[index].type,
-                              text: interestList[index].text,
-                              changeColor: interestList[index].isSelected,
+                              type: _interestList[index].type,
+                              text: _interestList[index].text,
+                              changeColor: _interestList[index].isSelected,
                             ),
                           )),
                 ),
@@ -547,14 +594,29 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               ),
               SizedBox(height: 52.h),
               BaseButton(
-                text: "다음",
+                text: "수정하기",
                 isDisable: _isButtonDisable(),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const BaseScaffold()),
-                  );
+                onPressed: () async {
+                  if (_profileImage != null) {
+                    final String newImgUrl =
+                        await UserService.getImageUrlBy(_profileImage!.path);
+                    widget.user.imgUrl = newImgUrl;
+                  }
+
+                  await UserService.putUser(widget.user);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('프로필 정보를 변경했습니다'),
+                      duration: Duration(microseconds: 500),
+                      behavior: SnackBarBehavior.fixed,
+                      backgroundColor: AppColor.g800,
+                    ));
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const BaseScaffold()),
+                        (route) => false);
+                  }
                 },
               ),
               SizedBox(height: 36.h),

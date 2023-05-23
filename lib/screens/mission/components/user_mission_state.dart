@@ -1,13 +1,21 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UserMissionState extends StatelessWidget {
+  final String imgUrl;
+  final String name;
+  final bool hasCompleted;
+
   const UserMissionState({
     super.key,
+    required this.imgUrl,
+    required this.name,
+    required this.hasCompleted,
   });
 
   @override
@@ -19,24 +27,24 @@ class UserMissionState extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                width: 36.w,
-                height: 36.w,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.r),
-                  image: const DecorationImage(
-                    fit: BoxFit.cover,
-                    alignment: FractionalOffset.center,
-                    image: NetworkImage(
-                        "https://images.unsplash.com/photo-1605434700731-331ca2458a77?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1365&q=80"),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10.r),
+                child: CachedNetworkImage(
+                  width: 36.w,
+                  height: 36.w,
+                  fit: BoxFit.cover,
+                  imageUrl: imgUrl,
+                  placeholder: (context, url) => Container(
+                    color: AppColor.g200,
                   ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
               SizedBox(
                 width: 12.w,
               ),
               Text(
-                "Sarah Kim",
+                name,
                 style: TextStyle(
                   fontFamily: pretendardFont,
                   fontSize: 14.sp,
@@ -50,20 +58,20 @@ class UserMissionState extends StatelessWidget {
           ),
           Container(
             decoration: BoxDecoration(
-              color: AppColor.green,
+              color: hasCompleted ? AppColor.g700 : AppColor.green,
               borderRadius: BorderRadius.circular(10.r),
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+              padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.w),
               child: Text(
-                "완료",
+                hasCompleted ? "완료" : "진행 중",
                 style: TextStyle(
                   fontFamily: pretendardFont,
                   fontSize: 12.sp,
                   fontVariations: const [
                     FontVariation('wght', 700),
                   ],
-                  color: AppColor.greenLight,
+                  color: AppColor.g100,
                 ),
               ),
             ),

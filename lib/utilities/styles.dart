@@ -82,7 +82,7 @@ class FontStyle {
 
   static var emptyNotificationTextStyle = TextStyle(
     fontFamily: pretendardFont,
-    fontSize: 16.sp,
+    fontSize: 15.sp,
     height: 1.55,
     fontVariations: const [
       FontVariation('wght', 600),

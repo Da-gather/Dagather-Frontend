@@ -195,6 +195,9 @@ class _TutorialStep3ScreenState extends State<TutorialStep3Screen> {
                   widget.user.introduction = _textController.text;
                   widget.user.uid = FirebaseAuth.instance.currentUser!.uid;
 
+                  final String newImgUrl =
+                      await UserService.getImageUrlBy(widget.user.imgUrl!);
+                  widget.user.imgUrl = newImgUrl;
                   await UserService.putUser(widget.user);
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

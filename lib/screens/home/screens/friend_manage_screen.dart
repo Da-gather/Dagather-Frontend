@@ -9,6 +9,7 @@ import 'package:dagather_frontend/screens/home/components/send_friend_request.da
 import 'package:dagather_frontend/screens/profile/screens/profile_screen.dart';
 import 'package:dagather_frontend/services/chat_service.dart';
 import 'package:dagather_frontend/services/friend_service.dart';
+import 'package:dagather_frontend/services/mission_service.dart';
 import 'package:dagather_frontend/services/user_service.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
@@ -26,350 +27,402 @@ class FriendManageScreen extends StatefulWidget {
 }
 
 class _FriendManageScreenState extends State<FriendManageScreen> {
-  final Future<List<FriendModel>> _receiveFriendRequest =
+  Future<List<FriendModel>> _receiveFriendRequest =
       FriendService.getFriendRequestsBy(FriendRequestType.receive);
 
-  final Future<List<FriendModel>> _sendFriendRequest =
+  Future<List<FriendModel>> _sendFriendRequest =
       FriendService.getFriendRequestsBy(FriendRequestType.send);
 
-  final Future<List<FriendModel>> _friends = FriendService.getFriends();
+  Future<List<FriendModel>> _friends = FriendService.getFriends();
 
-  bool _isLoading = false;
+  void _refreshData() {
+    _receiveFriendRequest =
+        FriendService.getFriendRequestsBy(FriendRequestType.receive);
+    _sendFriendRequest =
+        FriendService.getFriendRequestsBy(FriendRequestType.send);
+    _friends = FriendService.getFriends();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar("친구/신청 관리"),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(
-                          height: 8.h,
-                        ),
-                        Text(
-                          "친구 신청 받은 목록",
-                          style: FontStyle.captionTextStyle,
-                        ),
-                        SizedBox(
-                          height: 8.h,
-                        ),
-                      ],
-                    ),
+                  SizedBox(
+                    height: 8.h,
                   ),
-                  FutureBuilder(
-                    future: _receiveFriendRequest,
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        case ConnectionState.none:
-                          return const Center(
-                            child: Text("none"),
-                          );
-                        case ConnectionState.active:
-                        case ConnectionState.done:
-                          if (snapshot.hasError) {
-                            throw Error();
-                          }
-                          if (snapshot.hasData) {
-                            if (snapshot.data!.isEmpty) {
-                              return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 32.h),
-                                  child: Text(
-                                    textAlign: TextAlign.center,
-                                    "받은 친구 신청이 없습니다",
-                                    style: FontStyle.emptyNotificationTextStyle,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    ListView.separated(
-                                        physics: const ClampingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemBuilder: ((context, index) {
-                                          final friend = snapshot.data![index];
-
-                                          return GestureDetector(
-                                            child: ReceiveFriendRequest(
-                                              name: friend.name!,
-                                              imageUrl: friend.imgUrl!,
-                                              imgOnTapped: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ProfileScreen(
-                                                              uid: friend.uid!,
-                                                            )));
-                                              },
-                                              refuseButtonOnTapped: () {
-                                                FriendService.deleteFriend(
-                                                        friend.id)
-                                                    .then((value) => showDialog(
-                                                        barrierDismissible:
-                                                            false,
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return BaseDialog(
-                                                            buttonText: '확인',
-                                                            content:
-                                                                '친구 신청을 거절했습니다.',
-                                                            onPressed: () {},
-                                                          );
-                                                        }));
-                                              },
-                                              approveButtonOnTapped: () async {
-                                                await _approveFriend(
-                                                    friend.id, context);
-                                              },
-                                            ),
-                                          );
-                                        }),
-                                        separatorBuilder: (context, index) {
-                                          return SizedBox(
-                                            height: 0.h,
-                                          );
-                                        },
-                                        itemCount: snapshot.data!.length),
-                                  ],
-                                ),
-                              );
-                            }
-                          }
-                          throw Error();
-                      }
-                    },
+                  Text(
+                    "친구 신청 받은 목록",
+                    style: FontStyle.captionTextStyle,
                   ),
-                  const RequestDivder(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          "친구 신청한 목록",
-                          style: FontStyle.captionTextStyle,
-                        ),
-                        SizedBox(
-                          height: 8.h,
-                        ),
-                      ],
-                    ),
-                  ),
-                  FutureBuilder(
-                    future: _sendFriendRequest,
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        case ConnectionState.none:
-                          return const Center(
-                            child: Text("none"),
-                          );
-                        case ConnectionState.active:
-                        case ConnectionState.done:
-                          if (snapshot.hasError) {
-                            throw Error();
-                          }
-                          if (snapshot.hasData) {
-                            if (snapshot.data!.isEmpty) {
-                              return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 32.h),
-                                  child: Text(
-                                    textAlign: TextAlign.center,
-                                    "보낸 친구 신청이 없습니다",
-                                    style: FontStyle.emptyNotificationTextStyle,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    ListView.separated(
-                                        physics: const ClampingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemBuilder: ((context, index) {
-                                          final friend = snapshot.data![index];
-
-                                          return GestureDetector(
-                                            child: SendFriendRequest(
-                                              name: friend.name!,
-                                              imageUrl: friend.imgUrl!,
-                                              imgOnTapped: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ProfileScreen(
-                                                              uid: friend.uid!,
-                                                            )));
-                                              },
-                                              cancelBtnOnTapped: () {
-                                                _isLoading = true;
-                                                setState(() {});
-                                                FriendService.deleteFriend(
-                                                        friend.id)
-                                                    .then((value) {
-                                                  _isLoading = false;
-                                                  setState(() {});
-                                                });
-                                              },
-                                            ),
-                                          );
-                                        }),
-                                        separatorBuilder: (context, index) {
-                                          return SizedBox(
-                                            height: 0.h,
-                                          );
-                                        },
-                                        itemCount: snapshot.data!.length),
-                                  ],
-                                ),
-                              );
-                            }
-                          }
-                          throw Error();
-                      }
-                    },
-                  ),
-                  const RequestDivder(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          "친구 목록",
-                          style: FontStyle.captionTextStyle,
-                        ),
-                        SizedBox(
-                          height: 8.h,
-                        ),
-                      ],
-                    ),
-                  ),
-                  FutureBuilder(
-                    future: _friends,
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        case ConnectionState.none:
-                          return const Center(
-                            child: Text("none"),
-                          );
-                        case ConnectionState.active:
-                        case ConnectionState.done:
-                          if (snapshot.hasError) {
-                            throw Error();
-                          }
-                          if (snapshot.hasData) {
-                            if (snapshot.data!.isEmpty) {
-                              return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 32.h),
-                                  child: Text(
-                                    textAlign: TextAlign.center,
-                                    "아직 친구가 없습니다.",
-                                    style: FontStyle.emptyNotificationTextStyle,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    ListView.separated(
-                                        physics: const ClampingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemBuilder: ((context, index) {
-                                          final friend = snapshot.data![index];
-                                          return GestureDetector(
-                                            child: Friend(
-                                              name: friend.name!,
-                                              imageUrl: friend.imgUrl!,
-                                              imgOnTapped: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ProfileScreen(
-                                                              uid: friend.uid!,
-                                                            )));
-                                              },
-                                              cancelBtnOnTapped: () {
-                                                FriendService.deleteFriend(
-                                                        friend.id)
-                                                    .then((value) => ChatService
-                                                        .deleteChatRoomInFireStore(
-                                                            friend.chatroomId!))
-                                                    .then((value) => showDialog(
-                                                        barrierDismissible:
-                                                            false,
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return BaseDialog(
-                                                            buttonText: '확인',
-                                                            content:
-                                                                '친구가 삭제되었습니다.',
-                                                            onPressed: () {},
-                                                          );
-                                                        }));
-                                              },
-                                            ),
-                                          );
-                                        }),
-                                        separatorBuilder: (context, index) {
-                                          return SizedBox(
-                                            height: 0.h,
-                                          );
-                                        },
-                                        itemCount: snapshot.data!.length),
-                                  ],
-                                ),
-                              );
-                            }
-                          }
-                          throw Error();
-                      }
-                    },
+                  SizedBox(
+                    height: 8.h,
                   ),
                 ],
               ),
             ),
+            FutureBuilder(
+              future: _receiveFriendRequest,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case ConnectionState.none:
+                    return const Center(
+                      child: Text("none"),
+                    );
+                  case ConnectionState.active:
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      throw Error();
+                    }
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32.h),
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              "받은 친구 신청이 없습니다",
+                              style: FontStyle.emptyNotificationTextStyle,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ListView.separated(
+                                  physics: const ClampingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemBuilder: ((context, index) {
+                                    final friend = snapshot.data![index];
+
+                                    return GestureDetector(
+                                      child: ReceiveFriendRequest(
+                                        name: friend.name!,
+                                        imageUrl: friend.imgUrl!,
+                                        imgOnTapped: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProfileScreen(
+                                                        uid: friend.uid!,
+                                                      )));
+                                        },
+                                        refuseButtonOnTapped: () {
+                                          FriendService.deleteFriend(friend.id)
+                                              .then((value) => showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return WillPopScope(
+                                                      onWillPop: () async {
+                                                        _refreshData();
+
+                                                        return true;
+                                                      },
+                                                      child: BaseDialog(
+                                                        buttonText: '확인',
+                                                        content:
+                                                            '친구 신청을 거절했습니다.',
+                                                        onPressed: () {
+                                                          _refreshData();
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                    );
+                                                  }));
+                                        },
+                                        approveButtonOnTapped: () async {
+                                          await _approveFriend(
+                                                  friend.id, context)
+                                              .then((value) => showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return WillPopScope(
+                                                      onWillPop: () async {
+                                                        _refreshData();
+
+                                                        return true;
+                                                      },
+                                                      child: BaseDialog(
+                                                        buttonText: '확인',
+                                                        content:
+                                                            '친구 신청을 수락했습니다.',
+                                                        onPressed: () {
+                                                          _refreshData();
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                    );
+                                                  }));
+                                        },
+                                      ),
+                                    );
+                                  }),
+                                  separatorBuilder: (context, index) {
+                                    return SizedBox(
+                                      height: 0.h,
+                                    );
+                                  },
+                                  itemCount: snapshot.data!.length),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+                    throw Error();
+                }
+              },
+            ),
+            const RequestDivder(),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    "친구 신청한 목록",
+                    style: FontStyle.captionTextStyle,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                ],
+              ),
+            ),
+            FutureBuilder(
+              future: _sendFriendRequest,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case ConnectionState.none:
+                    return const Center(
+                      child: Text("none"),
+                    );
+                  case ConnectionState.active:
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      throw Error();
+                    }
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32.h),
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              "보낸 친구 신청이 없습니다",
+                              style: FontStyle.emptyNotificationTextStyle,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ListView.separated(
+                                  physics: const ClampingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemBuilder: ((context, index) {
+                                    final friend = snapshot.data![index];
+
+                                    return GestureDetector(
+                                      child: SendFriendRequest(
+                                        name: friend.name!,
+                                        imageUrl: friend.imgUrl!,
+                                        imgOnTapped: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProfileScreen(
+                                                        uid: friend.uid!,
+                                                      )));
+                                        },
+                                        cancelBtnOnTapped: () {
+                                          FriendService.deleteFriend(friend.id)
+                                              .then((value) => showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return WillPopScope(
+                                                      onWillPop: () async {
+                                                        _refreshData();
+
+                                                        return true;
+                                                      },
+                                                      child: BaseDialog(
+                                                        buttonText: '확인',
+                                                        content:
+                                                            '친구 신청을 취소했습니다.',
+                                                        onPressed: () {
+                                                          _refreshData();
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                    );
+                                                  }));
+                                        },
+                                      ),
+                                    );
+                                  }),
+                                  separatorBuilder: (context, index) {
+                                    return SizedBox(
+                                      height: 0.h,
+                                    );
+                                  },
+                                  itemCount: snapshot.data!.length),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+                    throw Error();
+                }
+              },
+            ),
+            const RequestDivder(),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    "친구 목록",
+                    style: FontStyle.captionTextStyle,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                ],
+              ),
+            ),
+            FutureBuilder(
+              future: _friends,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case ConnectionState.none:
+                    return const Center(
+                      child: Text("none"),
+                    );
+                  case ConnectionState.active:
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      throw Error();
+                    }
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32.h),
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              "아직 친구가 없습니다.",
+                              style: FontStyle.emptyNotificationTextStyle,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ListView.separated(
+                                  physics: const ClampingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemBuilder: ((context, index) {
+                                    final friend = snapshot.data![index];
+                                    return GestureDetector(
+                                      child: Friend(
+                                        name: friend.name!,
+                                        imageUrl: friend.imgUrl!,
+                                        imgOnTapped: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProfileScreen(
+                                                        uid: friend.uid!,
+                                                      )));
+                                        },
+                                        cancelBtnOnTapped: () {
+                                          FriendService.deleteFriend(friend.id)
+                                              .then((value) => ChatService
+                                                  .deleteChatRoomInFireStore(
+                                                      friend.chatroomId!))
+                                              .then((value) => showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return WillPopScope(
+                                                      onWillPop: () async {
+                                                        _refreshData();
+
+                                                        return true;
+                                                      },
+                                                      child: BaseDialog(
+                                                        buttonText: '확인',
+                                                        content: '친구가 삭제되었습니다.',
+                                                        onPressed: () {
+                                                          _refreshData();
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                    );
+                                                  }));
+                                        },
+                                      ),
+                                    );
+                                  }),
+                                  separatorBuilder: (context, index) {
+                                    return SizedBox(
+                                      height: 0.h,
+                                    );
+                                  },
+                                  itemCount: snapshot.data!.length),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+                    throw Error();
+                }
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -384,18 +437,7 @@ class _FriendManageScreenState extends State<FriendManageScreen> {
     final DocumentReference documentReference =
         await ChatService.createChatRoomInFireStore(chatModel.toJson());
     await FriendService.createChatroom(id, documentReference.id);
-    if (mounted) {
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (BuildContext context) {
-            return BaseDialog(
-              buttonText: '확인',
-              content: '친구 신청이 수락되었습니다.',
-              onPressed: () {},
-            );
-          });
-    }
+    await MissionService.createNewMission(sender.uid!, receiver.uid!);
   }
 }
 

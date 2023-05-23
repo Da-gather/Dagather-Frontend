@@ -56,28 +56,21 @@ class UserModel {
     return data;
   }
 
-  Map<String, String> toJson() {
-    final Map<String, String> data = {};
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
     data['memberId'] = uid!;
     data['resident'] = address!;
     data['name'] = name!;
-    data['gender'] = gender.toString();
+    data['gender'] = gender!;
+    data['imageUrl'] = imgUrl!;
     data['birth'] = DateFormat('yyyy-MM-dd').format(birth!);
     data['nationality'] = region!;
-    data['rperiod'] = period.toString();
+    data['rperiod'] = period!;
     data['introduction'] = introduction!;
-    data['purposes'] = purposeTags!
-        .map((element) => element.text)
-        .toList()
-        .toString()
-        .replaceAll(RegExp('[][]'), "");
-    data['interests'] = interestTags!
-        .map((element) => element.text)
-        .toList()
-        .toString()
-        .replaceAll(RegExp('[][]'), "");
-    data['longitude'] = longitude.toString();
-    data['latitude'] = latitude.toString();
+    data['purposes'] = purposeTags!.map((element) => element.text).toList();
+    data['interests'] = interestTags!.map((element) => element.text).toList();
+    data['longitude'] = longitude;
+    data['latitude'] = latitude;
     return data;
   }
 }

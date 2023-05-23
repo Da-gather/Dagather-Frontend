@@ -8,7 +8,7 @@ class BaseMidiumButton extends StatelessWidget {
   final Color textColor;
   final Color backgroundColor;
   final String text;
-  final void Function() onPressed;
+  final void Function()? onPressed;
 
   const BaseMidiumButton(
       {super.key,

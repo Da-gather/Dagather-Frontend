@@ -25,7 +25,7 @@ import 'dart:developer' as developer;
 
 import '../components/same_tag_calculator.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final String uid;
   late Future<UserModel> _user;
   late Future<Map<String, dynamic>> _missionStatistics;
@@ -35,6 +35,23 @@ class ProfileScreen extends StatelessWidget {
     _user = UserService.getUserById(uid);
     _missionStatistics = MissionService.getMissionStatistics(uid);
     _recentMissions = MissionService.getRecentMission(uid);
+  }
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String _formatAddress(String address) {
+    List<String> splitedAddress = address.split(' ');
+    return '${splitedAddress[0]} ${splitedAddress[1]} ${splitedAddress[2]}';
+  }
+
+  void _refreshData() {
+    widget._user = UserService.getUserById(widget.uid);
+    widget._missionStatistics = MissionService.getMissionStatistics(widget.uid);
+    widget._recentMissions = MissionService.getRecentMission(widget.uid);
+    setState(() {});
   }
 
   @override
@@ -48,7 +65,7 @@ class ProfileScreen extends StatelessWidget {
               height: 8.h,
             ),
             FutureBuilder(
-                future: _user,
+                future: widget._user,
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
@@ -165,7 +182,7 @@ class ProfileScreen extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  if (uid !=
+                                  if (widget.uid !=
                                       FirebaseAuth.instance.currentUser!.uid)
                                     getFriendRequestButton(user, context),
                                 ],
@@ -205,7 +222,7 @@ class ProfileScreen extends StatelessWidget {
                                 height: 8.h,
                               ),
                               Text(
-                                user.address!,
+                                _formatAddress(user.address!),
                                 style: TextStyle(
                                   fontFamily: pretendardFont,
                                   fontSize: 15.sp,
@@ -227,7 +244,7 @@ class ProfileScreen extends StatelessWidget {
                                 height: 8.h,
                               ),
                               Text(
-                                user.period.toString(),
+                                '${user.period.toString()}년 이하',
                                 style: TextStyle(
                                   fontFamily: pretendardFont,
                                   fontSize: 15.sp,
@@ -248,7 +265,8 @@ class ProfileScreen extends StatelessWidget {
                               SizedBox(
                                 height: 8.h,
                               ),
-                              if (uid != FirebaseAuth.instance.currentUser!.uid)
+                              if (widget.uid !=
+                                  FirebaseAuth.instance.currentUser!.uid)
                                 SameTagCalculator(
                                   count: purposeCount,
                                   type: TagType.purpose,
@@ -284,7 +302,8 @@ class ProfileScreen extends StatelessWidget {
                               SizedBox(
                                 height: 8.h,
                               ),
-                              if (uid != FirebaseAuth.instance.currentUser!.uid)
+                              if (widget.uid !=
+                                  FirebaseAuth.instance.currentUser!.uid)
                                 SameTagCalculator(
                                   count: interestCount,
                                   type: TagType.interest,
@@ -334,7 +353,7 @@ class ProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   FutureBuilder(
-                      future: _missionStatistics,
+                      future: widget._missionStatistics,
                       builder: (context, snapshot) {
                         switch (snapshot.connectionState) {
                           case ConnectionState.waiting:
@@ -367,7 +386,7 @@ class ProfileScreen extends StatelessWidget {
                     height: 32.h,
                   ),
                   FutureBuilder(
-                      future: _recentMissions,
+                      future: widget._recentMissions,
                       builder: (context, snapshot) {
                         switch (snapshot.connectionState) {
                           case ConnectionState.waiting:
@@ -405,7 +424,6 @@ class ProfileScreen extends StatelessWidget {
 
   BaseMidiumButton getFriendRequestButton(
       UserModel user, BuildContext context) {
-    print(user.friendState);
     switch (user.friendState) {
       case FriendStateType.isNotFriend:
         return BaseMidiumButton(
@@ -415,30 +433,39 @@ class ProfileScreen extends StatelessWidget {
           onPressed: () {
             FriendService.sendFriendRequestTo(user.uid)
                 .then((value) => showDialog(
-                    barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
-                      return BaseDialog(
-                        buttonText: '확인',
-                        content: '친구 신청이 완료되었습니다.',
-                        onPressed: () {},
+                      return WillPopScope(
+                        onWillPop: () async {
+                          _refreshData();
+
+                          return true;
+                        },
+                        child: BaseDialog(
+                          buttonText: '확인',
+                          content: '친구 신청이 완료되었습니다.',
+                          onPressed: () {
+                            _refreshData();
+                            Navigator.pop(context);
+                          },
+                        ),
                       );
                     }));
           },
         );
       case FriendStateType.send:
-        return BaseMidiumButton(
+        return const BaseMidiumButton(
           textColor: AppColor.g500,
           backgroundColor: AppColor.g200,
           text: "신청 완료",
-          onPressed: () {},
+          onPressed: null,
         );
       case FriendStateType.receive:
-        return BaseMidiumButton(
+        return const BaseMidiumButton(
           textColor: AppColor.g200,
           backgroundColor: AppColor.g700,
           text: "대기 중",
-          onPressed: () {},
+          onPressed: null,
         );
       case FriendStateType.isFriend:
         return BaseMidiumButton(

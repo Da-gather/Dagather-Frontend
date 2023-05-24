@@ -71,6 +71,16 @@ class FontStyle {
     color: AppColor.g800,
   );
 
+  static var wrongMessageTextStyle = TextStyle(
+    fontFamily: pretendardFont,
+    fontSize: 14.sp,
+    height: 1.55,
+    fontVariations: const [
+      FontVariation('wght', 600),
+    ],
+    color: AppColor.red,
+  );
+
   static var friendRequestTextStyle = TextStyle(
     fontFamily: pretendardFont,
     fontSize: 15.sp,

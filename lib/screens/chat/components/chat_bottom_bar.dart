@@ -2,7 +2,9 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dagather_frontend/models/correct_spell_model.dart';
 import 'package:dagather_frontend/models/message_model.dart';
+import 'package:dagather_frontend/services/chat_service.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:dagather_frontend/utilities/variables.dart';
@@ -60,6 +62,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
   void _sendImageMessage() async {
     final MessageModel data = MessageModel(
         content: await _uploadImage(),
+        corrected: null,
         sender: FirebaseAuth.instance.currentUser!.uid,
         type: MessageType.image.name,
         read: false,
@@ -76,8 +79,12 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
     isTextSending = true;
     setState(() {});
 
+    final CorrectSpellModel correctSpellModel =
+        await ChatService.checSpellingOfkMessage(_textController.text);
+
     final MessageModel data = MessageModel(
         content: _textController.text,
+        corrected: correctSpellModel,
         sender: FirebaseAuth.instance.currentUser!.uid,
         type: MessageType.text.name,
         read: false,

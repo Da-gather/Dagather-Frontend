@@ -2,7 +2,7 @@
     package="com.example.dagather_frontend">
    <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="dagather_frontend"
+        android:label="da:gather"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity 

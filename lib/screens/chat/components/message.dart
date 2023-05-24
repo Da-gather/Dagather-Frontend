@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dagather_frontend/models/correct_spell_model.dart';
 import 'package:dagather_frontend/screens/chat/screens/image_viewer_screen.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
 import 'package:dagather_frontend/utilities/variables.dart';
@@ -9,11 +10,12 @@ import 'package:intl/intl.dart';
 
 import '../../../utilities/colors.dart';
 
-class Message extends StatelessWidget {
+class Message extends StatefulWidget {
   final String content;
   final Timestamp created;
   final bool isMine;
   final String type;
+  final CorrectSpellModel? correctSpellModel;
 
   const Message({
     super.key,
@@ -21,7 +23,15 @@ class Message extends StatelessWidget {
     required this.created,
     required this.isMine,
     required this.type,
+    required this.correctSpellModel,
   });
+
+  @override
+  State<Message> createState() => _MessageState();
+}
+
+class _MessageState extends State<Message> {
+  bool hasChecked = false;
 
   String _formatTimeStamp(Timestamp timestamp) {
     final int createdInNum =
@@ -37,12 +47,24 @@ class Message extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Container(
-          margin: EdgeInsets.only(right: 6.w),
-          child: Text(
-            _formatTimeStamp(created),
-            style: FontStyle.timeTextStyle,
-          ),
+        Column(
+          children: [
+            IconButton(
+                onPressed: () async {
+                  hasChecked = !hasChecked;
+                  setState(() {});
+                },
+                icon: hasChecked
+                    ? const Icon(Icons.access_alarm)
+                    : const Icon(Icons.abc)),
+            Container(
+              margin: EdgeInsets.only(right: 6.w),
+              child: Text(
+                _formatTimeStamp(widget.created),
+                style: FontStyle.timeTextStyle,
+              ),
+            ),
+          ],
         ),
         Container(
           constraints: BoxConstraints(maxWidth: 270.w),
@@ -54,15 +76,22 @@ class Message extends StatelessWidget {
               bottomLeft: Radius.circular(20),
             ).r,
           ),
-          child: type == MessageType.text.name
+          child: widget.type == MessageType.text.name
               ? Padding(
                   padding: EdgeInsets.symmetric(
                     vertical: 12.h,
                     horizontal: 20.w,
                   ),
-                  child: Text(
-                    content,
-                    style: FontStyle.messageTextStyle,
+                  child: Column(
+                    children: [
+                      Text(
+                        widget.content,
+                        style: FontStyle.messageTextStyle,
+                      ),
+                      if (widget.type == MessageType.text.name && hasChecked)
+                        Text(widget.correctSpellModel!.correctText,
+                            style: FontStyle.wrongMessageTextStyle)
+                    ],
                   ),
                 )
               : Padding(
@@ -70,7 +99,7 @@ class Message extends StatelessWidget {
                     vertical: 12.h,
                     horizontal: 12.w,
                   ),
-                  child: ImageContent(content: content),
+                  child: ImageContent(content: widget.content),
                 ),
         ),
       ],
@@ -92,14 +121,14 @@ class Message extends StatelessWidget {
               bottomRight: Radius.circular(20),
             ).r,
           ),
-          child: type == MessageType.text.name
+          child: widget.type == MessageType.text.name
               ? Padding(
                   padding: EdgeInsets.symmetric(
                     vertical: 12.h,
                     horizontal: 20.w,
                   ),
                   child: Text(
-                    content,
+                    widget.content,
                     style: FontStyle.messageTextStyle,
                   ),
                 )
@@ -108,13 +137,13 @@ class Message extends StatelessWidget {
                     vertical: 12.h,
                     horizontal: 12.w,
                   ),
-                  child: ImageContent(content: content),
+                  child: ImageContent(content: widget.content),
                 ),
         ),
         Container(
           margin: EdgeInsets.only(left: 6.w),
           child: Text(
-            _formatTimeStamp(created),
+            _formatTimeStamp(widget.created),
             style: FontStyle.timeTextStyle,
           ),
         ),
@@ -124,7 +153,7 @@ class Message extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isMine ? myMessage(context) : otherMessage(context);
+    return widget.isMine ? myMessage(context) : otherMessage(context);
   }
 }
 

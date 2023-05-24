@@ -36,9 +36,9 @@ class _MissionScreenState extends State<MissionScreen> {
       bool hasCurrentUserCompleted, bool hasFriendCompleted) {
     if (!hasCurrentUserCompleted && !hasFriendCompleted) {
       return "미션을 완수한 사람이 없습니다.";
-    } else if (hasCurrentUserCompleted) {
+    } else if (!hasCurrentUserCompleted) {
       return "아직 $currentUserName님이 미션을 완수하지 않았습니다. 두 명 모두 미션을 완료하면 새로운 미션을 받을 수 있습니다.";
-    } else if (hasFriendCompleted) {
+    } else if (!hasFriendCompleted) {
       return "아직 $friendName님이 미션을 완수하지 않았습니다. 두 명 모두 미션을 완료하면 새로운 미션을 받을 수 있습니다.";
     }
     return '모두 미션을 완료했습니다.';
@@ -131,87 +131,107 @@ class _MissionScreenState extends State<MissionScreen> {
                               SizedBox(
                                 height: 8.h,
                               ),
-                              Row(
-                                children: [
-                                  Flexible(
-                                    flex: 1,
-                                    fit: FlexFit.tight,
-                                    child: BaseMidiumButton(
-                                        textColor: AppColor.g400,
-                                        backgroundColor: AppColor.g200,
-                                        text: "건너뛰기",
-                                        onPressed: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return ActionDialog(
-                                                  buttonColor: AppColor.red,
-                                                  buttonText: '건너뛰기',
-                                                  content:
-                                                      '미션을 건너뛰시겠습니까?\n상대방의 미션도 자동으로 변경되니 상대방과의 충분한 상의 후 다음 미션으로 변경하시길 바랍니다.',
-                                                  onPressed: () {},
-                                                );
-                                              });
-                                        }),
-                                  ),
-                                  SizedBox(
-                                    width: 8.w,
-                                  ),
-                                  Flexible(
-                                    flex: 3,
-                                    fit: FlexFit.tight,
-                                    child: BaseMidiumButton(
-                                        textColor: data.hasCurrentUserCompleted
-                                            ? AppColor.g200
-                                            : AppColor.g200,
-                                        backgroundColor:
-                                            data.hasCurrentUserCompleted
-                                                ? AppColor.g400
-                                                : AppColor.g800,
-                                        text: data.hasCurrentUserCompleted
-                                            ? "미션 완료"
-                                            : "미션 완료하기",
-                                        onPressed: data.hasCurrentUserCompleted
-                                            ? null
-                                            : () {
+                              data.hasCurrentUserCompleted &&
+                                      data.hasFriendCompleted
+                                  ? BaseMidiumButton(
+                                      textColor: AppColor.g100,
+                                      backgroundColor: AppColor.g900,
+                                      text: '새로운 미션 받기',
+                                      onPressed: () async {
+                                        await MissionService.createNewMission(
+                                            data.currentUserId!, data.friendId);
+
+                                        _refreshData();
+                                      })
+                                  : Row(
+                                      children: [
+                                        Flexible(
+                                          flex: 1,
+                                          fit: FlexFit.tight,
+                                          child: BaseMidiumButton(
+                                              textColor: AppColor.g400,
+                                              backgroundColor: AppColor.g200,
+                                              text: "건너뛰기",
+                                              onPressed: () {
                                                 showDialog(
                                                     context: context,
                                                     builder:
                                                         (BuildContext context) {
-                                                      return WillPopScope(
-                                                        onWillPop: () async {
-                                                          await MissionService
-                                                              .completeMission(
-                                                                  data.currentUserId!,
-                                                                  data.friendId);
-                                                          _refreshData();
-                                                          return true;
+                                                      return ActionDialog(
+                                                        buttonColor:
+                                                            AppColor.red,
+                                                        buttonText: '건너뛰기',
+                                                        content:
+                                                            '미션을 건너뛰시겠습니까?\n상대방의 미션도 자동으로 변경되니 상대방과의 충분한 상의 후 다음 미션으로 변경하시길 바랍니다.',
+                                                        onPressed: () {
+                                                          MissionService.createNewMission(
+                                                                  data
+                                                                      .currentUserId!,
+                                                                  data.friendId)
+                                                              .then((value) {
+                                                            _refreshData();
+                                                          }).then((value) =>
+                                                                  Navigator.pop(
+                                                                      context));
                                                         },
-                                                        child: ActionDialog(
-                                                          buttonColor:
-                                                              AppColor.yellow4,
-                                                          buttonText: '완료하기',
-                                                          content:
-                                                              '미션을 완료하겠습니까?',
-                                                          onPressed: () {
-                                                            MissionService.completeMission(
-                                                                    data
-                                                                        .currentUserId!,
-                                                                    data
-                                                                        .friendId)
-                                                                .then((value) {
-                                                              _refreshData();
-                                                            }).then((value) =>
-                                                                    Navigator.pop(
-                                                                        context));
-                                                          },
-                                                        ),
                                                       );
                                                     });
                                               }),
-                                  ),
-                                ],
-                              ),
+                                        ),
+                                        SizedBox(
+                                          width: 8.w,
+                                        ),
+                                        Flexible(
+                                          flex: 3,
+                                          fit: FlexFit.tight,
+                                          child: BaseMidiumButton(
+                                              textColor:
+                                                  data.hasCurrentUserCompleted
+                                                      ? AppColor.g200
+                                                      : AppColor.g200,
+                                              backgroundColor:
+                                                  data.hasCurrentUserCompleted
+                                                      ? AppColor.g400
+                                                      : AppColor.g800,
+                                              text: data.hasCurrentUserCompleted
+                                                  ? "미션 완료"
+                                                  : "미션 완료하기",
+                                              onPressed:
+                                                  data.hasCurrentUserCompleted
+                                                      ? null
+                                                      : () {
+                                                          showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return ActionDialog(
+                                                                  buttonColor:
+                                                                      AppColor
+                                                                          .yellow4,
+                                                                  buttonText:
+                                                                      '완료하기',
+                                                                  content:
+                                                                      '미션을 완료하겠습니까?',
+                                                                  onPressed:
+                                                                      () {
+                                                                    MissionService.completeMission(
+                                                                            data
+                                                                                .currentUserId!,
+                                                                            data
+                                                                                .friendId)
+                                                                        .then(
+                                                                            (value) {
+                                                                      _refreshData();
+                                                                    }).then((value) =>
+                                                                            Navigator.pop(context));
+                                                                  },
+                                                                );
+                                                              });
+                                                        }),
+                                        ),
+                                      ],
+                                    ),
                               SizedBox(
                                 height: 32.h,
                               ),

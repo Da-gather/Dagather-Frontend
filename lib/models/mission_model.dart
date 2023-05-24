@@ -38,11 +38,11 @@ class MissionModel {
         friendId = json["friendId"],
         friendName = json["friendName"],
         friendImgUrl = json["friendImageUrl"],
-        hasFriendCompleted = json["complete2"] ?? false,
+        hasFriendCompleted = json["friendCompleted"] ?? false,
         currentUserId = json["userId"],
         currentUserName = json["userName"],
         currentUserImgUrl = json["userImageUrl"],
-        hasCurrentUserCompleted = json["complete1"] ?? false,
+        hasCurrentUserCompleted = json["userCompleted"] ?? false,
         mission = json["mission"],
         category = json["category"] {
     color =

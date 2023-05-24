@@ -468,11 +468,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onPressed: null,
         );
       case FriendStateType.isFriend:
-        return BaseMidiumButton(
-          textColor: AppColor.blueLight,
-          backgroundColor: AppColor.blue,
-          text: "채팅방으로 이동",
-          onPressed: () {},
+        return const BaseMidiumButton(
+          textColor: AppColor.g200,
+          backgroundColor: AppColor.g800,
+          text: "친구",
+          onPressed: null,
         );
       default:
         throw Error();

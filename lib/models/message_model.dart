@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dagather_frontend/models/correct_spell_model.dart';
 
 class MessageModel {
   final String content;
@@ -6,9 +7,11 @@ class MessageModel {
   final String type;
   final bool read;
   final Timestamp created;
+  CorrectSpellModel? corrected;
 
   MessageModel({
     required this.content,
+    required this.corrected,
     required this.sender,
     required this.type,
     required this.read,
@@ -17,6 +20,7 @@ class MessageModel {
 
   MessageModel.fromJson(Map<String, dynamic> json)
       : content = json["content"],
+        corrected = CorrectSpellModel.fromJson(json['corrected']),
         sender = json["sender"],
         type = json["type"],
         read = json["read"],
@@ -25,6 +29,7 @@ class MessageModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['content'] = content;
+    data['corrected'] = corrected != null ? corrected!.toJson() : null;
     data['sender'] = sender;
     data['type'] = type;
     data['read'] = read;

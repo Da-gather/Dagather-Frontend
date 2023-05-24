@@ -8,6 +8,7 @@ import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'dart:developer' as developer;
 
 import '../components/chat_app_bar.dart';
@@ -117,6 +118,7 @@ class ChatScreen extends StatelessWidget {
                               type: message.type,
                               isMine: message.sender ==
                                   FirebaseAuth.instance.currentUser!.uid,
+                              correctSpellModel: message.corrected,
                             );
 
                             if (message.sender !=

@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dagather_frontend/models/correct_spell_model.dart';
 import 'package:dagather_frontend/screens/chat/screens/image_viewer_screen.dart';
+import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
 import 'package:dagather_frontend/utilities/variables.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +26,7 @@ class Message extends StatefulWidget {
     required this.created,
     required this.isMine,
     required this.type,
-    required this.correctSpellModel,
+    this.correctSpellModel,
   });
 
   @override
@@ -48,23 +51,43 @@ class _MessageState extends State<Message> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            IconButton(
-                onPressed: () async {
-                  hasChecked = !hasChecked;
-                  setState(() {});
-                },
-                icon: hasChecked
-                    ? const Icon(Icons.access_alarm)
-                    : const Icon(Icons.abc)),
-            Container(
-              margin: EdgeInsets.only(right: 6.w),
-              child: Text(
-                _formatTimeStamp(widget.created),
-                style: FontStyle.timeTextStyle,
+            if (widget.correctSpellModel != null)
+              SizedBox(
+                width: 28.w,
+                height: 28.w,
+                child: Center(
+                  child: IconButton(
+                      padding: const EdgeInsets.all(0),
+                      onPressed: () async {
+                        hasChecked = !hasChecked;
+                        setState(() {});
+                      },
+                      icon: hasChecked
+                          ? Icon(
+                              Icons.cancel_rounded,
+                              size: 20.w,
+                              color: AppColor.g700,
+                            )
+                          : Icon(
+                              Icons.spellcheck_rounded,
+                              size: 20.w,
+                              color: AppColor.green,
+                            )),
+                ),
               ),
+            SizedBox(
+              height: 4.h,
+            ),
+            Text(
+              _formatTimeStamp(widget.created),
+              style: FontStyle.timeTextStyle,
             ),
           ],
+        ),
+        SizedBox(
+          width: 6.w,
         ),
         Container(
           constraints: BoxConstraints(maxWidth: 270.w),
@@ -89,8 +112,46 @@ class _MessageState extends State<Message> {
                         style: FontStyle.messageTextStyle,
                       ),
                       if (widget.type == MessageType.text.name && hasChecked)
-                        Text(widget.correctSpellModel!.correctText,
-                            style: FontStyle.wrongMessageTextStyle)
+                        (widget.correctSpellModel!.errorCount == 0 ||
+                                widget.correctSpellModel!.wordBags.isEmpty)
+                            ? Container(
+                                margin: EdgeInsets.only(top: 4.h),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 3.h, horizontal: 10.w),
+                                decoration: BoxDecoration(
+                                  color: AppColor.g100,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
+                                    bottomRight: Radius.circular(20),
+                                  ).r,
+                                ),
+                                child: Text('올바른 문장 입니다',
+                                    style: TextStyle(
+                                      fontFamily: pretendardFont,
+                                      fontSize: 14.sp,
+                                      height: 1.55,
+                                      fontVariations: const [
+                                        FontVariation('wght', 500),
+                                      ],
+                                      color: AppColor.green,
+                                    )),
+                              )
+                            : Container(
+                                margin: EdgeInsets.only(top: 4.h),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 3.h, horizontal: 10.w),
+                                decoration: BoxDecoration(
+                                  color: AppColor.g100,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
+                                    bottomRight: Radius.circular(20),
+                                  ).r,
+                                ),
+                                child: Text(
+                                    widget.correctSpellModel!.correctText,
+                                    style: FontStyle.wrongMessageTextStyle))
                     ],
                   ),
                 )
@@ -127,9 +188,54 @@ class _MessageState extends State<Message> {
                     vertical: 12.h,
                     horizontal: 20.w,
                   ),
-                  child: Text(
-                    widget.content,
-                    style: FontStyle.messageTextStyle,
+                  child: Column(
+                    children: [
+                      Text(
+                        widget.content,
+                        style: FontStyle.messageTextStyle,
+                      ),
+                      if (widget.type == MessageType.text.name && hasChecked)
+                        (widget.correctSpellModel!.errorCount == 0 ||
+                                widget.correctSpellModel!.wordBags.isEmpty)
+                            ? Container(
+                                margin: EdgeInsets.only(top: 4.h),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 3.h, horizontal: 10.w),
+                                decoration: BoxDecoration(
+                                  color: AppColor.g100,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
+                                    bottomRight: Radius.circular(20),
+                                  ).r,
+                                ),
+                                child: Text('올바른 문장 입니다',
+                                    style: TextStyle(
+                                      fontFamily: pretendardFont,
+                                      fontSize: 14.sp,
+                                      height: 1.55,
+                                      fontVariations: const [
+                                        FontVariation('wght', 500),
+                                      ],
+                                      color: AppColor.green,
+                                    )),
+                              )
+                            : Container(
+                                margin: EdgeInsets.only(top: 4.h),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 3.h, horizontal: 10.w),
+                                decoration: BoxDecoration(
+                                  color: AppColor.g100,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
+                                    bottomRight: Radius.circular(20),
+                                  ).r,
+                                ),
+                                child: Text(
+                                    widget.correctSpellModel!.correctText,
+                                    style: FontStyle.wrongMessageTextStyle))
+                    ],
                   ),
                 )
               : Padding(
@@ -140,12 +246,44 @@ class _MessageState extends State<Message> {
                   child: ImageContent(content: widget.content),
                 ),
         ),
-        Container(
-          margin: EdgeInsets.only(left: 6.w),
-          child: Text(
-            _formatTimeStamp(widget.created),
-            style: FontStyle.timeTextStyle,
-          ),
+        SizedBox(
+          width: 6.w,
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.correctSpellModel != null)
+              SizedBox(
+                width: 28.w,
+                height: 28.w,
+                child: Center(
+                  child: IconButton(
+                      padding: const EdgeInsets.all(0),
+                      onPressed: () async {
+                        hasChecked = !hasChecked;
+                        setState(() {});
+                      },
+                      icon: hasChecked
+                          ? Icon(
+                              Icons.cancel_rounded,
+                              size: 20.w,
+                              color: AppColor.g700,
+                            )
+                          : Icon(
+                              Icons.spellcheck_rounded,
+                              size: 20.w,
+                              color: AppColor.green,
+                            )),
+                ),
+              ),
+            SizedBox(
+              height: 4.h,
+            ),
+            Text(
+              _formatTimeStamp(widget.created),
+              style: FontStyle.timeTextStyle,
+            ),
+          ],
         ),
       ],
     );

@@ -20,7 +20,9 @@ class MessageModel {
 
   MessageModel.fromJson(Map<String, dynamic> json)
       : content = json["content"],
-        corrected = CorrectSpellModel.fromJson(json['corrected']),
+        corrected = json['corrected'] != null
+            ? CorrectSpellModel.fromJson(json['corrected'])
+            : null,
         sender = json["sender"],
         type = json["type"],
         read = json["read"],

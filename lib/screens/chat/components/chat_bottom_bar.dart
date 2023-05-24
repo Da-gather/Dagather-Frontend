@@ -7,6 +7,7 @@ import 'package:dagather_frontend/models/message_model.dart';
 import 'package:dagather_frontend/services/chat_service.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
+import 'package:dagather_frontend/utilities/styles.dart';
 import 'package:dagather_frontend/utilities/variables.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -31,6 +32,9 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
   final ImagePicker picker = ImagePicker();
   bool isImageSending = false;
   bool isTextSending = false;
+  String srcLangType = 'en';
+  String tarLangType = 'ko';
+  bool translateButtonIsTapped = false;
 
   void _removeImage() {
     imageFile = null;
@@ -223,11 +227,136 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
     }
   }
 
+  Widget _getTranslateWidget() {
+    return Container(
+      color: AppColor.g200,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                DropdownButtonHideUnderline(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColor.g100,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 3.h, horizontal: 8.w),
+                      child: DropdownButton(
+                        hint: Text(
+                          "국적 선택",
+                          style: FontStyle.hintTextStyle,
+                        ),
+                        enableFeedback: true,
+                        value: srcLangType,
+                        elevation: 0,
+                        style: FontStyle.inputTextStyle,
+                        icon: Icon(
+                          Icons.arrow_drop_down_rounded,
+                          color: AppColor.g400,
+                          size: 24.w,
+                        ),
+                        borderRadius: BorderRadius.circular(10.r),
+                        items: detectLanguages.map((item) {
+                          return DropdownMenuItem<String>(
+                            value: item["code"],
+                            child: Text(item["language"]!),
+                          );
+                        }).toList(),
+                        onChanged: (dynamic value) {
+                          setState(() {
+                            srcLangType = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 6.w,
+                ),
+                Icon(
+                  Icons.east_rounded,
+                  color: AppColor.g600,
+                  size: 20.w,
+                ),
+                SizedBox(
+                  width: 6.w,
+                ),
+                DropdownButtonHideUnderline(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColor.g100,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 3.h, horizontal: 8.w),
+                      child: DropdownButton(
+                        hint: Text(
+                          "국적 선택",
+                          style: FontStyle.hintTextStyle,
+                        ),
+                        enableFeedback: true,
+                        value: tarLangType,
+                        elevation: 0,
+                        style: FontStyle.inputTextStyle,
+                        icon: Icon(
+                          Icons.arrow_drop_down_rounded,
+                          color: AppColor.g400,
+                          size: 24.w,
+                        ),
+                        borderRadius: BorderRadius.circular(10.r),
+                        items: detectLanguages.map((item) {
+                          return DropdownMenuItem<String>(
+                            value: item["code"],
+                            child: Text(item["language"]!),
+                          );
+                        }).toList(),
+                        onChanged: (dynamic value) {
+                          setState(() {
+                            tarLangType = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
+                  backgroundColor: AppColor.yellow4,
+                  disabledBackgroundColor: AppColor.g200,
+                  foregroundColor: AppColor.g900,
+                  disabledForegroundColor: AppColor.g300,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8).r,
+                  ),
+                ),
+                child: Text(
+                  "번역",
+                  style: FontStyle.inputTextStyle,
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         if (imageFile != null) _getImageSelectWidget(),
+        if (translateButtonIsTapped) _getTranslateWidget(),
         Container(
           height: 60.h,
           decoration: const BoxDecoration(
@@ -273,7 +402,10 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  translateButtonIsTapped = !translateButtonIsTapped;
+                  setState(() {});
+                },
                 color: AppColor.blue,
                 icon: const Icon(Icons.translate_rounded),
               ),
@@ -287,7 +419,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
                         /// 텍스트 X, 이미지 X: 버튼 비활성화
                         /// 텍스트 O, 이미지 X: 텍스트 전송
                         /// 텍스트 X, 이미지 O: 이미지 전송
-                        /// 텍스트 O, 이미지 O: 이미지 전송 후 텍스트 전송
+                        /// 텍스트 O, 이미지 O: 텍스트 전송 후 이미지 전송
 
                         if (_textController.text.isNotEmpty &&
                             imageFile == null) {

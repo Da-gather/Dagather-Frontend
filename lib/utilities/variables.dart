@@ -52,6 +52,110 @@ final missionTypes = [
   ),
 ];
 
+final List<Map<String, String>> detectLanguages = [
+  {
+    "language": '한국어',
+    "code": 'ko',
+  },
+  {
+    "language": '일본어',
+    "code": 'ja',
+  },
+  {
+    "language": '중국어 간체',
+    "code": 'zh-CN',
+  },
+  {
+    "language": '중국어 번체',
+    "code": 'zh-TW',
+  },
+  {
+    "language": '힌디어',
+    "code": 'hi',
+  },
+  {
+    "language": '영어',
+    "code": 'en',
+  },
+  {
+    "language": '스페인어',
+    "code": 'es',
+  },
+  {
+    "language": '프랑스어',
+    "code": 'fr',
+  },
+  {
+    "language": '독일어',
+    "code": 'de',
+  },
+  {
+    "language": '포르투갈어',
+    "code": 'pt',
+  },
+  {
+    "language": '베트남어',
+    "code": 'vi',
+  },
+  {
+    "language": '인도네시아어',
+    "code": 'id',
+  },
+  {
+    "language": '페르시아어',
+    "code": 'fa',
+  },
+  {
+    "language": '아랍어',
+    "code": 'ar',
+  },
+  {
+    "language": '미얀마어',
+    "code": 'mm',
+  },
+  {
+    "language": '태국어',
+    "code": 'th',
+  },
+  {
+    "language": '러시아어',
+    "code": 'ru',
+  },
+  {
+    "language": '이탈리아어',
+    "code": 'it',
+  },
+];
+
+final Map<String, List<String>> avaliableTranslate = {
+  'ko': [
+    'en',
+    'ja',
+    'zh-CN',
+    'zh-TW',
+    'vi',
+    'id',
+    'th',
+    'de',
+    'ru',
+    'es',
+    'it',
+    'fr',
+  ],
+  'en': ['fr', 'zh-CN', 'zh-TW', 'ko'],
+  'ja': ['zh-CN', 'zh-TW', 'ko', 'en'],
+  'zh-CN': ['zh-TW', 'ko', 'en', 'ja'],
+  'zh-TW': ['zh-CN', 'ko', 'en', 'ja'],
+  'vi': ['ko'],
+  'id': ['ko'],
+  'th': ['ko'],
+  'de': ['ko'],
+  'ru': ['ko'],
+  'es': ['ko'],
+  'it': ['ko'],
+  'fr': ['ko', 'en'],
+};
+
 final purposes = [
   '한국어 공부',
   '한국 생활 적응',

@@ -46,7 +46,7 @@ class _TutorialStep3ScreenState extends State<TutorialStep3Screen> {
 
   bool _isButtonDisable() {
     return _countSelected(purposeList) == 0 ||
-        _countSelected(interestList) < 3 ||
+        _countSelected(interestList) < 5 ||
         _countSelected(interestList) > 10 ||
         _textController.text.isEmpty;
   }
@@ -104,7 +104,7 @@ class _TutorialStep3ScreenState extends State<TutorialStep3Screen> {
               ),
               SizedBox(height: 32.h),
               Text(
-                "관심사(최소 3개, 최대 10개)",
+                "관심사(최소 5개, 최대 10개)",
                 style: FontStyle.captionTextStyle,
               ),
               SizedBox(height: 8.h),

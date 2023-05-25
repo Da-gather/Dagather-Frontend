@@ -1,6 +1,11 @@
 import 'package:dagather_frontend/models/mission_type_model.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 
+enum ProfileFilterType {
+  nation,
+  basic,
+}
+
 enum MessageType {
   text,
   image,

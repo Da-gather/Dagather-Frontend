@@ -25,9 +25,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../components/account_action.dart';
 
-class AccountScreen extends StatelessWidget {
-  AccountScreen({super.key});
+class AccountScreen extends StatefulWidget {
+  const AccountScreen({super.key});
 
+  @override
+  State<AccountScreen> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen> {
   final Uri _url = Uri.parse(
       'https://docs.google.com/forms/d/e/1FAIpQLSf-fWUDEmkrM0LlUxjnSciKaC0j9Ty7Pb4tt4SQp3kx9_zhYg/viewform');
 
@@ -40,18 +45,31 @@ class AccountScreen extends StatelessWidget {
     }
   }
 
-  final Future<UserModel> _user =
+  Future<UserModel> _user =
       UserService.getUserById(FirebaseAuth.instance.currentUser!.uid);
 
-  final Future<Map<String, dynamic>> _missionStatistics =
+  Future<Map<String, dynamic>> _missionStatistics =
       MissionService.getMissionStatistics(
           FirebaseAuth.instance.currentUser!.uid);
 
-  final Future<List<MissionModel>> _missionRecent =
+  Future<List<MissionModel>> _missionRecent =
       MissionService.getRecentMission(FirebaseAuth.instance.currentUser!.uid);
 
-  final Future<List<MissionModel>> _missionOngoings =
+  Future<List<MissionModel>> _missionOngoings =
       MissionService.getOngoingMissions(FirebaseAuth.instance.currentUser!.uid);
+
+  @override
+  void initState() {
+    super.initState();
+    _user = UserService.getUserById(FirebaseAuth.instance.currentUser!.uid);
+    _missionStatistics = MissionService.getMissionStatistics(
+        FirebaseAuth.instance.currentUser!.uid);
+    _missionRecent =
+        MissionService.getRecentMission(FirebaseAuth.instance.currentUser!.uid);
+    _missionOngoings = MissionService.getOngoingMissions(
+        FirebaseAuth.instance.currentUser!.uid);
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {

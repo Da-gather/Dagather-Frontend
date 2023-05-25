@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class TranslateService {
-  Future<String> getLanguageCodePapago(String content) async {
+  static Future<String> getLanguageCodePapago(String content) async {
     String contentType = "application/x-www-form-urlencoded; charset=UTF-8";
     String url = "https://openapi.naver.com/v1/papago/detectLangs";
 
@@ -26,11 +26,12 @@ class TranslateService {
     }
   }
 
-  Future<String> getTranslationPapago(String content) async {
+  static Future<String> getTranslationPapago(
+      {required String text,
+      required String target,
+      required String source}) async {
     String contentType = "application/x-www-form-urlencoded; charset=UTF-8";
     String url = "https://openapi.naver.com/v1/papago/n2mt";
-
-    final code = await getLanguageCodePapago(content);
 
     final response = await http.post(
       Uri.parse(url),
@@ -40,9 +41,9 @@ class TranslateService {
         'X-Naver-Client-Secret': API.clientSecret
       },
       body: {
-        'source': code,
-        'target': "ko",
-        'text': content,
+        'source': source,
+        'target': target,
+        'text': text,
       },
     );
     if (response.statusCode == 200) {

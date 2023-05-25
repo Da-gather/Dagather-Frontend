@@ -1,5 +1,6 @@
 import 'package:dagather_frontend/screens/account/screens/account_screen.dart';
 import 'package:dagather_frontend/screens/chat/screens/chats_screen.dart';
+import 'package:dagather_frontend/screens/home/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,7 +18,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
   int _selectedIdx = 0;
 
   final List<Widget> _screenList = [
-    //HomeScreen(),
+    HomeScreen(),
     ChatsScreen(),
     AccountScreen(),
   ];

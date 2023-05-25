@@ -11,6 +11,7 @@ import 'package:dagather_frontend/models/user_model.dart';
 import 'package:dagather_frontend/services/user_service.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
+import 'package:dagather_frontend/utilities/functions.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
 import 'package:dagather_frontend/utilities/variables.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         _periodTextController.text.isEmpty ||
         _introductionTextController.text.isEmpty ||
         _countSelected(_purposeList) == 0 ||
-        _countSelected(_interestList) < 3 ||
+        _countSelected(_interestList) < 5 ||
         _countSelected(_interestList) > 10;
   }
 
@@ -511,7 +512,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               ),
               SizedBox(height: 32.h),
               Text(
-                "관심사(최소 3개, 최대 10개)",
+                "관심사(최소 5개, 최대 10개)",
                 style: FontStyle.captionTextStyle,
               ),
               SizedBox(height: 8.h),
@@ -602,6 +603,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         await UserService.getImageUrlBy(_profileImage!.path);
                     widget.user.imgUrl = newImgUrl;
                   }
+
+                  widget.user.name = _nameTextController.text;
+                  widget.user.gender = getGenderBool(_gender);
+                  widget.user.birth = _date;
+                  widget.user.region = _region;
+                  widget.user.period = int.parse(_periodTextController.text);
+                  widget.user.address = _address;
+                  widget.user.purposeTags = _getListWithSelected(_purposeList);
+                  widget.user.interestTags =
+                      _getListWithSelected(_interestList);
+                  widget.user.introduction = _introductionTextController.text;
 
                   await UserService.putUser(widget.user);
                   if (context.mounted) {

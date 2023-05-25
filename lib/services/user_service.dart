@@ -11,13 +11,25 @@ class UserService {
   static const String filter = 'filter';
   static const String image = 'image';
 
-  static Future<List<UserModel>> getUsers() async {
-    final url = Uri.parse(
-        'http://${API.baseUrl}${API.version}/$profile/$list?$filter=');
-
+  static Future<List<UserModel>> getUsers({String? option}) async {
+    late Uri url;
     Map<String, String> headers = {
       'Authorization': FirebaseAuth.instance.currentUser!.uid,
     };
+
+    if (option != null) {
+      final Map<String, String> queryParameters = {};
+      queryParameters['filter'] = option;
+
+      url = Uri.http(
+        API.baseUrl,
+        '${API.version}/$profile/$list',
+        queryParameters,
+      );
+    } else {
+      url = Uri.parse(
+          'http://${API.baseUrl}${API.version}/$profile/$list?$filter=');
+    }
 
     List<UserModel> userInstances = [];
 

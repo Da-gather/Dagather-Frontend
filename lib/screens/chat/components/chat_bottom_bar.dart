@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dagather_frontend/models/correct_spell_model.dart';
 import 'package:dagather_frontend/models/message_model.dart';
 import 'package:dagather_frontend/services/chat_service.dart';
+import 'package:dagather_frontend/services/translate_service.dart';
 import 'package:dagather_frontend/utilities/colors.dart';
 import 'package:dagather_frontend/utilities/fonts.dart';
 import 'package:dagather_frontend/utilities/styles.dart';
@@ -32,9 +33,30 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
   final ImagePicker picker = ImagePicker();
   bool isImageSending = false;
   bool isTextSending = false;
-  String srcLangType = 'en';
+  String srcLangType = '';
   String tarLangType = 'ko';
+
   bool translateButtonIsTapped = false;
+
+  late List<Map<String, String>> avaliableDetectLanguages;
+
+  @override
+  void initState() {
+    super.initState();
+    _setAvaliableLanguages();
+  }
+
+  void _setAvaliableLanguages() {
+    if (srcLangType != '') {
+      avaliableDetectLanguages = detectLanguages
+          .where((element) =>
+              avaliableTranslate[srcLangType]!.contains(element['code']))
+          .toList();
+    } else {
+      avaliableDetectLanguages = detectLanguages;
+    }
+    tarLangType = avaliableDetectLanguages[0]['code']!;
+  }
 
   void _removeImage() {
     imageFile = null;
@@ -97,6 +119,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
     await addMessage(data);
 
     _textController.clear();
+    srcLangType = '';
     isTextSending = false;
     setState(() {});
   }
@@ -237,45 +260,37 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
           children: [
             Row(
               children: [
-                DropdownButtonHideUnderline(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.g100,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 3.h, horizontal: 8.w),
-                      child: DropdownButton(
-                        hint: Text(
-                          "국적 선택",
-                          style: FontStyle.hintTextStyle,
-                        ),
-                        enableFeedback: true,
-                        value: srcLangType,
-                        elevation: 0,
-                        style: FontStyle.inputTextStyle,
-                        icon: Icon(
-                          Icons.arrow_drop_down_rounded,
-                          color: AppColor.g400,
-                          size: 24.w,
-                        ),
-                        borderRadius: BorderRadius.circular(10.r),
-                        items: detectLanguages.map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item["code"],
-                            child: Text(item["language"]!),
-                          );
-                        }).toList(),
-                        onChanged: (dynamic value) {
-                          setState(() {
-                            srcLangType = value;
-                          });
-                        },
+                TextButton(
+                    onPressed: _textController.text.isEmpty
+                        ? null
+                        : () async {
+                            srcLangType =
+                                await TranslateService.getLanguageCodePapago(
+                                    _textController.text);
+                            _setAvaliableLanguages();
+                            setState(() {});
+                          },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.h, horizontal: 12.w),
+                      backgroundColor: AppColor.g100,
+                      disabledBackgroundColor: AppColor.g300,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8).r,
                       ),
                     ),
-                  ),
-                ),
+                    child: Text(
+                        _textController.text.isEmpty ? "언어 감지필요" : "언어 감지하기",
+                        style: TextStyle(
+                          fontFamily: pretendardFont,
+                          fontSize: 15.sp,
+                          fontVariations: const [
+                            FontVariation('wght', 600),
+                          ],
+                          color: _textController.text.isEmpty
+                              ? AppColor.g200
+                              : AppColor.g600,
+                        ))),
                 SizedBox(
                   width: 6.w,
                 ),
@@ -287,63 +302,82 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
                 SizedBox(
                   width: 6.w,
                 ),
-                DropdownButtonHideUnderline(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.g100,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 3.h, horizontal: 8.w),
-                      child: DropdownButton(
-                        hint: Text(
-                          "국적 선택",
-                          style: FontStyle.hintTextStyle,
+                avaliableDetectLanguages.isEmpty
+                    ? const Text("d")
+                    : DropdownButtonHideUnderline(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColor.g100,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 3.h, horizontal: 8.w),
+                            child: DropdownButton(
+                              hint: Text(
+                                "번역 언어",
+                                style: FontStyle.hintTextStyle,
+                              ),
+                              enableFeedback: true,
+                              value: tarLangType,
+                              elevation: 0,
+                              style: FontStyle.inputTextStyle,
+                              icon: Icon(
+                                Icons.arrow_drop_down_rounded,
+                                color: AppColor.g400,
+                                size: 24.w,
+                              ),
+                              borderRadius: BorderRadius.circular(10.r),
+                              items: avaliableDetectLanguages.map((item) {
+                                return DropdownMenuItem<String>(
+                                  value: item["code"],
+                                  child: Text(item["language"]!),
+                                );
+                              }).toList(),
+                              onChanged: (dynamic value) {
+                                tarLangType = value;
+                                setState(() {});
+                              },
+                            ),
+                          ),
                         ),
-                        enableFeedback: true,
-                        value: tarLangType,
-                        elevation: 0,
-                        style: FontStyle.inputTextStyle,
-                        icon: Icon(
-                          Icons.arrow_drop_down_rounded,
-                          color: AppColor.g400,
-                          size: 24.w,
-                        ),
-                        borderRadius: BorderRadius.circular(10.r),
-                        items: detectLanguages.map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item["code"],
-                            child: Text(item["language"]!),
-                          );
-                        }).toList(),
-                        onChanged: (dynamic value) {
-                          setState(() {
-                            tarLangType = value;
-                          });
-                        },
                       ),
-                    ),
-                  ),
-                ),
               ],
             ),
             TextButton(
-                onPressed: () {},
+                onPressed: srcLangType == '' || _textController.text.isEmpty
+                    ? null
+                    : () async {
+                        final String translatedText =
+                            await TranslateService.getTranslationPapago(
+                                text: _textController.text,
+                                source: srcLangType,
+                                target: tarLangType);
+                        _textController.text = translatedText;
+                        srcLangType = '';
+                        setState(() {});
+                      },
                 style: TextButton.styleFrom(
                   padding:
                       EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
                   backgroundColor: AppColor.yellow4,
-                  disabledBackgroundColor: AppColor.g200,
-                  foregroundColor: AppColor.g900,
-                  disabledForegroundColor: AppColor.g300,
+                  disabledBackgroundColor: AppColor.g300,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8).r,
                   ),
                 ),
                 child: Text(
                   "번역",
-                  style: FontStyle.inputTextStyle,
+                  style: TextStyle(
+                    fontFamily: pretendardFont,
+                    fontSize: 15.sp,
+                    fontVariations: const [
+                      FontVariation('wght', 600),
+                    ],
+                    color: srcLangType == '' || _textController.text.isEmpty
+                        ? AppColor.g200
+                        : AppColor.g900,
+                  ),
                 ))
           ],
         ),
@@ -372,8 +406,6 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
               Flexible(
                 child: TextField(
                   onChanged: (value) {
-                    developer
-                        .log('이미지: $isImageSending      텍스트: $isTextSending');
                     setState(() {});
                   },
                   controller: _textController,

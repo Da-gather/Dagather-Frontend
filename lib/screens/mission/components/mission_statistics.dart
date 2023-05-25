@@ -108,7 +108,7 @@ class MissionStatistics extends StatelessWidget {
                             return const InformationDialog(
                               title: "미션의 카테고리는 무엇이 있나요?",
                               content:
-                                  '미션의 카테고리는 총 4개가 있으며, 색상으로 구분됩니다. 빨간색은 000, 노란색은 000, 초록색은 000, 파란색은 000입니다.',
+                                  '미션의 카테고리는 총 4개가 있으며, 색상으로 구분됩니다. 빨간색은 한국 문화 미션, 노란색은 한국어 학습 미션, 초록색은 일상 미션, 파란색은 취미 미션입니다.',
                             );
                           });
                     },

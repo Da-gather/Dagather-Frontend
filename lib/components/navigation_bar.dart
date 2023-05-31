@@ -18,9 +18,9 @@ class _BaseScaffoldState extends State<BaseScaffold> {
   int _selectedIdx = 0;
 
   final List<Widget> _screenList = [
-    const HomeScreen(),
-    const ChatsScreen(),
-    const AccountScreen(),
+    HomeScreen(),
+    ChatsScreen(),
+    AccountScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -36,50 +36,53 @@ class _BaseScaffoldState extends State<BaseScaffold> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: _screenList.elementAt(_selectedIdx),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIdx,
-        backgroundColor: Colors.white,
-        unselectedItemColor: AppColor.g400,
-        onTap: _onItemTapped,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                width: 24.w,
-                'assets/icons/navigation/ic_home.svg',
-              ),
-              activeIcon: SvgPicture.asset(
-                width: 24.w,
-                'assets/icons/navigation/ic_home_filled.svg',
-              ),
-              label: 'home'),
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                width: 24.w,
-                'assets/icons/navigation/ic_chat.svg',
-              ),
-              activeIcon: SvgPicture.asset(
-                width: 24.w,
-                'assets/icons/navigation/ic_chat_filled.svg',
-              ),
-              label: 'chat'),
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                width: 24.w,
-                'assets/icons/navigation/ic_person.svg',
-              ),
-              activeIcon: SvgPicture.asset(
-                width: 24.w,
-                'assets/icons/navigation/ic_person_filled.svg',
-              ),
-              label: 'account'),
-        ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: SafeArea(
+          child: _screenList.elementAt(_selectedIdx),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIdx,
+          backgroundColor: Colors.white,
+          unselectedItemColor: AppColor.g400,
+          onTap: _onItemTapped,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  width: 24.w,
+                  'assets/icons/navigation/ic_home.svg',
+                ),
+                activeIcon: SvgPicture.asset(
+                  width: 24.w,
+                  'assets/icons/navigation/ic_home_filled.svg',
+                ),
+                label: 'home'),
+            BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  width: 24.w,
+                  'assets/icons/navigation/ic_chat.svg',
+                ),
+                activeIcon: SvgPicture.asset(
+                  width: 24.w,
+                  'assets/icons/navigation/ic_chat_filled.svg',
+                ),
+                label: 'chat'),
+            BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  width: 24.w,
+                  'assets/icons/navigation/ic_person.svg',
+                ),
+                activeIcon: SvgPicture.asset(
+                  width: 24.w,
+                  'assets/icons/navigation/ic_person_filled.svg',
+                ),
+                label: 'account'),
+          ],
+        ),
       ),
     );
   }
